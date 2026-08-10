@@ -478,6 +478,18 @@ abstract class AppLocalizations {
   /// **'Balance trend'**
   String get balanceTrend;
 
+  /// No description provided for @barChartHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap any bar for details'**
+  String get barChartHint;
+
+  /// No description provided for @lineChartHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap any point for details'**
+  String get lineChartHint;
+
   /// No description provided for @total.
   ///
   /// In en, this message translates to:

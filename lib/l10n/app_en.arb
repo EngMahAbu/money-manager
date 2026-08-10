@@ -70,6 +70,8 @@
   "incomeVsExpense": "Income vs expense",
   "spendingByCategory": "Spending by category",
   "balanceTrend": "Balance trend",
+  "barChartHint": "Tap any bar for details",
+  "lineChartHint": "Tap any point for details",
   "total": "total",
   "searchTransactions": "Search transactions",
   "filters": "Filters",

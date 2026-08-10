@@ -1,8 +1,11 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:intl/intl.dart';
+
+import '../../data/daos.dart';
+import '../../data/database.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/theme/app_colors.dart';
 import '../../shared/theme/app_text_styles.dart';
@@ -16,8 +19,6 @@ import '../transactions/widgets/date_range_picker_sheet.dart';
 import '../transactions/widgets/multi_select_picker_sheet.dart';
 import 'cubit/reports_cubit.dart';
 import 'cubit/reports_state.dart';
-import '../../data/daos.dart';
-import '../../data/database.dart';
 
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
@@ -27,6 +28,9 @@ class ReportsScreen extends StatefulWidget {
 }
 
 class _ReportsScreenState extends State<ReportsScreen> {
+  int? _touchedBarIndex;
+  int? _touchedLineIndex;
+
   @override
   void initState() {
     super.initState();
@@ -171,6 +175,10 @@ class _ReportsScreenState extends State<ReportsScreen> {
   }
 
   Widget _buildIncomeVsExpense(ReportsState state, AppLocalizations l10n) {
+    final maxValue = _getMaxValue(
+        state.monthlyIncomeSeries, state.monthlyExpenseSeries);
+    final currencyFormat = NumberFormat.simpleCurrency(decimalDigits: 0);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -178,61 +186,139 @@ class _ReportsScreenState extends State<ReportsScreen> {
         const SizedBox(height: 24),
         SizedBox(
           height: 180,
-          child: BarChart(
-            BarChartData(
-              alignment: BarChartAlignment.spaceAround,
-              maxY: _getMaxValue(state.monthlyIncomeSeries, state.monthlyExpenseSeries) * 1.2,
-              barTouchData: BarTouchData(enabled: false),
-              titlesData: FlTitlesData(
-                show: true,
-                bottomTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    getTitlesWidget: (value, meta) {
-                      if (value < 0 || value >= state.monthlyIncomeSeries.length) return const SizedBox();
-                      final date = state.monthlyIncomeSeries[value.toInt()].date;
-                      final isLast = value.toInt() == state.monthlyIncomeSeries.length - 1;
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Text(
-                          DateFormat('MMM').format(date),
-                          style: AppTextStyles.muted.copyWith(
-                            fontSize: 10,
-                            color: isLast ? AppColors.accent : AppColors.textMuted,
-                            fontWeight: isLast ? FontWeight.w500 : FontWeight.w400,
-                          ),
+          child: Stack(
+            children: [
+              // Min/Max Labels
+              Positioned(
+                top: 0,
+                left: 0,
+                child: Text(
+                  currencyFormat.format(maxValue),
+                  style: AppTextStyles.muted.copyWith(fontSize: 10),
+                ),
+              ),
+              Positioned(
+                bottom: 38, // Adjusted for x-axis labels
+                left: 0,
+                child: Text(
+                  currencyFormat.format(0),
+                  style: AppTextStyles.muted.copyWith(fontSize: 10),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 44.0),
+                child: BarChart(
+                  BarChartData(
+                    alignment: BarChartAlignment.spaceAround,
+                    maxY: maxValue * 1.2,
+                    barTouchData: BarTouchData(
+                      touchTooltipData: BarTouchTooltipData(
+                        getTooltipColor: (_) => AppColors.textPrimary,
+                        tooltipRoundedRadius: 6,
+                        tooltipPadding: const EdgeInsets.symmetric(
+                            horizontal: 7, vertical: 4),
+                        getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                          return BarTooltipItem(
+                            currencyFormat.format(rod.toY),
+                            AppTextStyles.body.copyWith(
+                              color: AppColors.surfacePage,
+                              fontSize: 10,
+                            ),
+                          );
+                        },
+                      ),
+                      touchCallback: (FlTouchEvent event, barTouchResponse) {
+                        setState(() {
+                          if (!event.isInterestedForInteractions ||
+                              barTouchResponse == null ||
+                              barTouchResponse.spot == null) {
+                            _touchedBarIndex = -1;
+                            return;
+                          }
+                          _touchedBarIndex =
+                              barTouchResponse.spot!.touchedBarGroupIndex;
+                        });
+                      },
+                    ),
+                    titlesData: FlTitlesData(
+                      show: true,
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (value, meta) {
+                            if (value < 0 ||
+                                value >= state.monthlyIncomeSeries.length)
+                              return const SizedBox();
+                            final date = state.monthlyIncomeSeries[value
+                                .toInt()].date;
+                            final isTouched = value.toInt() == _touchedBarIndex;
+                            final isLast = value.toInt() ==
+                                state.monthlyIncomeSeries.length - 1 &&
+                                _touchedBarIndex == -1;
+
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text(
+                                DateFormat('MMM').format(date),
+                                style: AppTextStyles.muted.copyWith(
+                                  fontSize: 10,
+                                  color: (isTouched || isLast) ? AppColors
+                                      .accent : AppColors.textMuted,
+                                  fontWeight: (isTouched || isLast) ? FontWeight
+                                      .w500 : FontWeight.w400,
+                                ),
+                              ),
+                            );
+                          },
+                          reservedSize: 30,
                         ),
+                      ),
+                      leftTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false)),
+                      rightTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false)),
+                      topTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false)),
+                    ),
+                    gridData: const FlGridData(show: false),
+                    borderData: FlBorderData(show: false),
+                    barGroups: List.generate(
+                        state.monthlyIncomeSeries.length, (index) {
+                      final isTouched = index == _touchedBarIndex;
+                      return BarChartGroupData(
+                        x: index,
+                        barRods: [
+                          BarChartRodData(
+                            toY: state.monthlyIncomeSeries[index].value,
+                            color: AppColors.success,
+                            width: 8,
+                            borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(2)),
+                            borderSide: isTouched
+                                ? const BorderSide(
+                                color: AppColors.textPrimary, width: 1.5)
+                                : const BorderSide(
+                                color: Colors.transparent, width: 0),
+                          ),
+                          BarChartRodData(
+                            toY: state.monthlyExpenseSeries[index].value,
+                            color: AppColors.danger,
+                            width: 8,
+                            borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(2)),
+                            borderSide: isTouched
+                                ? const BorderSide(
+                                color: AppColors.textPrimary, width: 1.5)
+                                : const BorderSide(
+                                color: Colors.transparent, width: 0),
+                          ),
+                        ],
                       );
-                    },
-                    reservedSize: 30,
+                    }),
                   ),
                 ),
-                leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
               ),
-              gridData: const FlGridData(show: false),
-              borderData: FlBorderData(show: false),
-              barGroups: List.generate(state.monthlyIncomeSeries.length, (index) {
-                return BarChartGroupData(
-                  x: index,
-                  barRods: [
-                    BarChartRodData(
-                      toY: state.monthlyIncomeSeries[index].value,
-                      color: AppColors.success,
-                      width: 8,
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(2)),
-                    ),
-                    BarChartRodData(
-                      toY: state.monthlyExpenseSeries[index].value,
-                      color: AppColors.danger,
-                      width: 8,
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(2)),
-                    ),
-                  ],
-                );
-              }),
-            ),
+            ],
           ),
         ),
         const SizedBox(height: 16),
@@ -242,6 +328,13 @@ class _ReportsScreenState extends State<ReportsScreen> {
             const SizedBox(width: 16),
             _buildLegendItem(l10n.expense, AppColors.danger),
           ],
+        ),
+        const SizedBox(height: 4),
+        Center(
+          child: Text(
+            l10n.barChartHint,
+            style: AppTextStyles.muted.copyWith(fontSize: 10),
+          ),
         ),
       ],
     );
@@ -364,6 +457,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
 
   Widget _buildBalanceTrend(ReportsState state, AppLocalizations l10n) {
     if (state.balanceTrend.isEmpty) return const SizedBox();
+    final currencyFormat = NumberFormat.simpleCurrency(decimalDigits: 0);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -375,6 +469,38 @@ class _ReportsScreenState extends State<ReportsScreen> {
           child: LineChart(
             LineChartData(
               gridData: const FlGridData(show: false),
+              lineTouchData: LineTouchData(
+                touchTooltipData: LineTouchTooltipData(
+                  getTooltipColor: (_) => AppColors.textPrimary,
+                  tooltipRoundedRadius: 6,
+                  tooltipPadding: const EdgeInsets.symmetric(
+                      horizontal: 7, vertical: 4),
+                  getTooltipItems: (touchedSpots) {
+                    return touchedSpots.map((spot) {
+                      return LineTooltipItem(
+                        currencyFormat.format(spot.y),
+                        AppTextStyles.body.copyWith(
+                          color: AppColors.surfacePage,
+                          fontSize: 10,
+                        ),
+                      );
+                    }).toList();
+                  },
+                ),
+                touchCallback: (FlTouchEvent event, lineTouchResponse) {
+                  setState(() {
+                    if (!event.isInterestedForInteractions ||
+                        lineTouchResponse == null ||
+                        lineTouchResponse.lineBarSpots == null) {
+                      _touchedLineIndex = -1;
+                      return;
+                    }
+                    _touchedLineIndex =
+                        lineTouchResponse.lineBarSpots!.first.spotIndex;
+                  });
+                },
+                handleBuiltInTouches: true,
+              ),
               titlesData: FlTitlesData(
                 show: true,
                 bottomTitles: AxisTitles(
@@ -383,24 +509,32 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     getTitlesWidget: (value, meta) {
                       if (value == 0) {
                         return Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
+                          padding: const EdgeInsetsGeometry.directional(
+                              top: 8.0, start: 32.0),
                           child: Text(
-                            DateFormat('MMM').format(state.balanceTrend.first.date),
-                            style: AppTextStyles.muted.copyWith(fontSize: 10),
+                            '${DateFormat('MMM').format(state.balanceTrend.first
+                                .date)} · ${currencyFormat.format(
+                                state.balanceTrend.first.value)}',
+                            style: AppTextStyles.muted.copyWith(fontSize: 9),
                           ),
                         );
                       }
                       if (value == state.balanceTrend.length - 1) {
                         return Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
+                          padding: const EdgeInsetsGeometry.directional(
+                              top: 8.0, end: 32.0),
                           child: Text(
-                            DateFormat('MMM').format(state.balanceTrend.last.date),
-                            style: AppTextStyles.muted.copyWith(fontSize: 10),
+                            '${DateFormat('MMM').format(state.balanceTrend.last
+                                .date)} · ${currencyFormat.format(
+                                state.balanceTrend.last.value)}',
+                            style: AppTextStyles.muted.copyWith(fontSize: 9),
+                            textAlign: TextAlign.end,
                           ),
                         );
                       }
                       return const SizedBox();
                     },
+                    reservedSize: 30,
                   ),
                 ),
                 leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -420,7 +554,11 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   dotData: FlDotData(
                     show: true,
                     getDotPainter: (spot, percent, barData, index) {
-                      if (index == state.balanceTrend.length - 1) {
+                      final isTouched = index == _touchedLineIndex;
+                      final isLast = index == state.balanceTrend.length - 1 &&
+                          _touchedLineIndex == -1;
+
+                      if (isTouched || isLast) {
                         return FlDotCirclePainter(
                           radius: 4,
                           color: AppColors.accent,
@@ -435,6 +573,13 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 ),
               ],
             ),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Center(
+          child: Text(
+            l10n.lineChartHint,
+            style: AppTextStyles.muted.copyWith(fontSize: 10),
           ),
         ),
       ],

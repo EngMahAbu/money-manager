@@ -32,7 +32,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<TransactionsCubit>().loadTransactions();
+    // No need to load here, the Cubit handles its own initial load
   }
 
   @override
@@ -147,7 +147,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       appBar: _isSearching ? _buildSearchAppBar(l10n) : _buildDefaultAppBar(l10n),
       body: BlocBuilder<TransactionsCubit, TransactionsState>(
         builder: (context, state) {
-          if (state is TransactionsLoading) {
+          if (state is TransactionsLoading || state is TransactionsInitial) {
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -156,42 +156,58 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
           }
 
           if (state is TransactionsLoaded) {
-            final groupedTransactions = _groupTransactionsByDate(state.transactions);
+            final transactions = state.transactions;
+            if (transactions.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(TablerIcons.receipt_off, size: 48, color: AppColors.textMuted),
+                    const SizedBox(height: 16),
+                    Text('No transactions found', style: AppTextStyles.muted),
+                  ],
+                ),
+              );
+            }
+
+            final groupedTransactions = _groupTransactionsByDate(transactions);
+            final accountIds = state.accountIds;
+            final categoryIds = state.categoryIds;
             
             return CustomScrollView(
+              key: const PageStorageKey('transactions_scroll_view'),
               slivers: [
                 if (!_isSearching)
                   SliverPersistentHeader(
                     pinned: true,
+                    key: const ValueKey('filter_header'),
                     delegate: _FilterHeaderDelegate(
                       child: Container(
-                        color: AppColors.surfacePage,
+                        height: 60,
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        child: SingleChildScrollView(
+                        child: ListView(
                           scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: [
-                              AppFilterChip(
-                                label: state.startDate != null ? 'Filtered Range' : l10n.thisMonth,
-                                isActive: state.startDate != null,
-                                onTap: () => _showDateRangePicker(state),
-                              ),
-                              const SizedBox(width: 8),
-                              AppFilterChip(
-                                label: state.accountIds?.length == 1 
-                                    ? 'Account selected' 
-                                    : (state.accountIds != null && state.accountIds!.isNotEmpty ? 'Multiple accounts' : l10n.allAccounts),
-                                isActive: state.accountIds?.isNotEmpty ?? false,
-                                onTap: () => _showAccountMultiSelect(state),
-                              ),
-                              const SizedBox(width: 8),
-                              AppFilterChip(
-                                label: state.categoryIds != null && state.categoryIds!.isNotEmpty ? 'Category selected' : l10n.category,
-                                isActive: state.categoryIds?.isNotEmpty ?? false,
-                                onTap: () => _showCategoryMultiSelect(state),
-                              ),
-                            ],
-                          ),
+                          children: [
+                            AppFilterChip(
+                              label: state.startDate != null ? 'Filtered Range' : l10n.thisMonth,
+                              isActive: state.startDate != null,
+                              onTap: () => _showDateRangePicker(state),
+                            ),
+                            const SizedBox(width: 8),
+                            AppFilterChip(
+                              label: (accountIds != null && accountIds.length == 1)
+                                  ? 'Account selected' 
+                                  : (accountIds != null && accountIds.isNotEmpty ? 'Multiple accounts' : l10n.allAccounts),
+                              isActive: accountIds != null && accountIds.isNotEmpty,
+                              onTap: () => _showAccountMultiSelect(state),
+                            ),
+                            const SizedBox(width: 8),
+                            AppFilterChip(
+                              label: (categoryIds != null && categoryIds.isNotEmpty) ? 'Category selected' : l10n.category,
+                              isActive: categoryIds != null && categoryIds.isNotEmpty,
+                              onTap: () => _showCategoryMultiSelect(state),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -209,12 +225,14 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
+                      if (index >= groupedTransactions.length) return null;
                       final group = groupedTransactions[index];
                       return _buildDateGroup(group, l10n);
                     },
                     childCount: groupedTransactions.length,
                   ),
                 ),
+                const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
               ],
             );
           }
@@ -286,6 +304,9 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             ? l10n.yesterday
             : DateFormat('MMM d').format(group.date);
 
+    final accountsState = context.read<AccountsCubit>().state;
+    final accounts = accountsState is AccountsLoaded ? accountsState.activeAccounts : <Account>[];
+
     return Column(
       children: [
         Padding(
@@ -306,11 +327,14 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
         Column(
           children: List.generate(group.transactions.length, (index) {
             final tx = group.transactions[index];
+            final account = accounts.where((a) => a.id == tx.accountId).firstOrNull;
+            final accountName = account?.name ?? 'Unknown';
+
             return TransactionRow(
               icon: tx.type == TransactionType.income ? TablerIcons.briefcase : TablerIcons.shopping_cart,
               name: tx.note ?? (tx.type == TransactionType.income ? 'Income' : 'Expense'),
               highlightQuery: _isSearching ? _searchController.text : null,
-              timestamp: 'Main bank', 
+              timestamp: accountName,
               amount: tx.amount.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},'),
               isIncome: tx.type == TransactionType.income,
               isTransfer: tx.type == TransactionType.transfer,
@@ -326,15 +350,12 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     final groups = <DateTime, List<Transaction>>{};
     for (final tx in transactions) {
       final date = DateTime(tx.date.year, tx.date.month, tx.date.day);
-      if (!groups.containsKey(date)) {
-        groups[date] = [];
-      }
-      groups[date]!.add(tx);
+      groups.putIfAbsent(date, () => []).add(tx);
     }
 
     final sortedDates = groups.keys.toList()..sort((a, b) => b.compareTo(a));
     return sortedDates.map((date) {
-      final txs = groups[date]!;
+      final txs = groups[date] ?? [];
       double total = 0;
       for (final tx in txs) {
         if (tx.type == TransactionType.income) total += tx.amount;
@@ -358,14 +379,18 @@ class _FilterHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      decoration: BoxDecoration(
+    return SizedBox.expand(
+      child: Material(
         color: AppColors.surfacePage,
-        border: overlapsContent 
-            ? const Border(bottom: BorderSide(color: AppColors.borderStrong, width: 0.5)) 
-            : null,
+        child: Container(
+          decoration: BoxDecoration(
+            border: overlapsContent 
+                ? const Border(bottom: BorderSide(color: AppColors.borderStrong, width: 0.5)) 
+                : null,
+          ),
+          child: child,
+        ),
       ),
-      child: child,
     );
   }
 
@@ -374,5 +399,5 @@ class _FilterHeaderDelegate extends SliverPersistentHeaderDelegate {
   @override
   double get minExtent => 60;
   @override
-  bool shouldRebuild(covariant _FilterHeaderDelegate oldDelegate) => false;
+  bool shouldRebuild(covariant _FilterHeaderDelegate oldDelegate) => true;
 }

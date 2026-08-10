@@ -100,6 +100,56 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recentTransactions => 'Recent transactions';
 
   @override
+  String get searchTransactions => 'Search transactions';
+
+  @override
+  String get filters => 'Filters';
+
+  @override
+  String get reset => 'Reset';
+
+  @override
+  String get applyFilters => 'Apply filters';
+
+  @override
+  String get dateRange => 'Date range';
+
+  @override
+  String get allAccounts => 'All accounts';
+
+  @override
+  String get thisMonth => 'This month';
+
+  @override
+  String get lastMonth => 'Last month';
+
+  @override
+  String get last7Days => 'Last 7 days';
+
+  @override
+  String get last30Days => 'Last 30 days';
+
+  @override
+  String results(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count results',
+      one: '1 result',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get chooseDateRange => 'Choose date range';
+
+  @override
+  String get filterByAccount => 'Filter by account';
+
+  @override
+  String get filterByCategory => 'Filter by category';
+
+  @override
   String get chooseAccount => 'Choose account';
 
   @override

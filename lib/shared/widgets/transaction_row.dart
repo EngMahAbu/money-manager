@@ -5,6 +5,7 @@ import '../theme/app_text_styles.dart';
 class TransactionRow extends StatelessWidget {
   final IconData icon;
   final String name;
+  final String? highlightQuery;
   final String timestamp;
   final String amount;
   final bool isIncome;
@@ -15,6 +16,7 @@ class TransactionRow extends StatelessWidget {
     super.key,
     required this.icon,
     required this.name,
+    this.highlightQuery,
     required this.timestamp,
     required this.amount,
     this.isIncome = false,
@@ -55,12 +57,7 @@ class TransactionRow extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      name,
-                      style: AppTextStyles.body,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    _buildName(context),
                     Text(timestamp, style: AppTextStyles.muted),
                   ],
                 ),
@@ -79,6 +76,46 @@ class TransactionRow extends StatelessWidget {
         if (showDivider)
           const Divider(indent: 56, endIndent: 12),
       ],
+    );
+  }
+
+  Widget _buildName(BuildContext context) {
+    if (highlightQuery == null || highlightQuery!.isEmpty) {
+      return Text(
+        name,
+        style: AppTextStyles.body,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      );
+    }
+
+    final lowerName = name.toLowerCase();
+    final lowerQuery = highlightQuery!.toLowerCase();
+    final startIndex = lowerName.indexOf(lowerQuery);
+
+    if (startIndex == -1) {
+      return Text(
+        name,
+        style: AppTextStyles.body,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      );
+    }
+
+    return RichText(
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      text: TextSpan(
+        style: AppTextStyles.body,
+        children: [
+          TextSpan(text: name.substring(0, startIndex)),
+          TextSpan(
+            text: name.substring(startIndex, startIndex + highlightQuery!.length),
+            style: const TextStyle(color: AppColors.accent, fontWeight: FontWeight.w500),
+          ),
+          TextSpan(text: name.substring(startIndex + highlightQuery!.length)),
+        ],
+      ),
     );
   }
 }

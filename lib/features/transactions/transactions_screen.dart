@@ -6,7 +6,6 @@ import '../../data/database.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/theme/app_colors.dart';
 import '../../shared/theme/app_text_styles.dart';
-import '../../shared/theme/theme_constants.dart';
 import '../../shared/widgets/filter_chip.dart';
 import '../../shared/widgets/transaction_row.dart';
 import '../accounts/cubit/accounts_cubit.dart';

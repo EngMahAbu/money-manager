@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
@@ -12,12 +13,14 @@ import '../accounts/cubit/accounts_cubit.dart';
 import '../accounts/cubit/accounts_state.dart';
 import '../categories/cubit/categories_cubit.dart';
 import '../categories/cubit/categories_state.dart';
+import 'cubit/transactions_cubit.dart';
 import 'widgets/numeric_keypad.dart';
 import 'widgets/account_picker_sheet.dart';
 import 'widgets/category_picker_sheet.dart';
 import 'widgets/date_picker_sheet.dart';
 import 'widgets/receipts_strip.dart';
 import '../accounts/add_edit_account_screen.dart';
+import '../categories/add_edit_category_screen.dart';
 
 class AddEditTransactionScreen extends StatefulWidget {
   final Transaction? transaction;
@@ -153,7 +156,10 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
               Navigator.pop(context);
             },
             onAddCategory: () {
-              // TODO: Add Category screen
+              Navigator.pop(context);
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const AddEditCategoryScreen(), fullscreenDialog: true),
+              );
             },
           );
         },
@@ -171,6 +177,68 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
         onDateSelected: (date) => setState(() => _selectedDate = date),
       ),
     );
+  }
+
+  void _save() {
+    final l10n = AppLocalizations.of(context)!;
+    final amount = double.tryParse(_amountString) ?? 0.0;
+
+    if (amount <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.errorAmountZero)));
+      return;
+    }
+
+    if (_selectedAccount == null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.chooseAccount)));
+      return;
+    }
+
+    if (_selectedType == TransactionType.transfer) {
+      if (_selectedToAccount == null) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.chooseAccount)));
+        return;
+      }
+      if (_selectedAccount!.id == _selectedToAccount!.id) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.errorTransferSameAccount)));
+        return;
+      }
+    } else {
+      if (_selectedCategory == null) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.chooseCategory)));
+        return;
+      }
+    }
+
+    final cubit = context.read<TransactionsCubit>();
+    if (widget.transaction != null) {
+      cubit.updateTransaction(
+        widget.transaction!.copyWith(
+          accountId: _selectedAccount!.id,
+          categoryId: drift.Value(_selectedCategory?.id),
+          toAccountId: drift.Value(_selectedToAccount?.id),
+          amount: amount,
+          date: _selectedDate,
+          note: drift.Value(_note),
+          receipts: drift.Value(_receipts.join('|')),
+          type: _selectedType,
+        ),
+      );
+    } else {
+      cubit.addTransaction(
+        TransactionsCompanion.insert(
+          accountId: _selectedAccount!.id,
+          categoryId: drift.Value(_selectedCategory?.id),
+          toAccountId: drift.Value(_selectedToAccount?.id),
+          amount: amount,
+          date: _selectedDate,
+          note: drift.Value(_note),
+          receipts: drift.Value(_receipts.join('|')),
+          type: _selectedType,
+        ),
+      );
+    }
+
+    Navigator.of(context).pop();
   }
 
   @override
@@ -192,9 +260,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
         actions: [
           IconButton(
             icon: const Icon(TablerIcons.check, color: AppColors.accent),
-            onPressed: () {
-              // TODO: Save implementation
-            },
+            onPressed: _save,
           ),
         ],
       ),

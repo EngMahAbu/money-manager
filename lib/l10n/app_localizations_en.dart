@@ -30,7 +30,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings => 'Settings';
 
   @override
-  String get netWorth => 'Net Worth';
+  String get totalNetWorth => 'Total net worth';
+
+  @override
+  String get netWorth => 'Net worth';
 
   @override
   String get income => 'Income';
@@ -42,16 +45,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transfer => 'Transfer';
 
   @override
+  String get seeAll => 'See all';
+
+  @override
+  String get recentTransactions => 'Recent transactions';
+
+  @override
+  String archivedWithCount(Object count) {
+    return 'Archived ($count)';
+  }
+
+  @override
+  String get restore => 'Restore';
+
+  @override
   String get addTransaction => 'Add Transaction';
 
   @override
   String get editTransaction => 'Edit Transaction';
 
   @override
-  String get addAccount => 'Add Account';
+  String get newTransaction => 'New transaction';
 
   @override
-  String get editAccount => 'Edit Account';
+  String get addAccount => 'Add account';
+
+  @override
+  String get editAccount => 'Edit account';
 
   @override
   String get accountName => 'Account Name';
@@ -69,13 +89,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get balance => 'Balance';
 
   @override
-  String get balanceHelper => 'Negative means money owed';
+  String get startingBalance => 'Starting balance';
 
   @override
-  String get iconAndColor => 'Icon & Color';
+  String get balanceHelper =>
+      'Negative means money owed — matches how it\'s shown across the app';
 
   @override
-  String get archiveAccount => 'Archive Account';
+  String get iconAndColor => 'Icon and color';
+
+  @override
+  String get archiveAccount => 'Archive account';
+
+  @override
+  String get bankAccount => 'Bank account';
+
+  @override
+  String get cashAccount => 'Cash';
+
+  @override
+  String get creditCardAccount => 'Credit card';
+
+  @override
+  String get savingsAccount => 'Savings';
 
   @override
   String get welcomeTitle => 'Welcome to Money Manager';
@@ -88,16 +124,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addFirstAccount => 'Add My First Account';
 
   @override
-  String get newTransaction => 'New transaction';
+  String get thisMonth => 'This month';
 
   @override
-  String get totalNetWorth => 'Total net worth';
+  String get lastMonth => 'Last month';
 
   @override
-  String get seeAll => 'See all';
+  String get last7Days => 'Last 7 days';
 
   @override
-  String get recentTransactions => 'Recent transactions';
+  String get last30Days => 'Last 30 days';
 
   @override
   String get searchTransactions => 'Search transactions';
@@ -116,18 +152,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get allAccounts => 'All accounts';
-
-  @override
-  String get thisMonth => 'This month';
-
-  @override
-  String get lastMonth => 'Last month';
-
-  @override
-  String get last7Days => 'Last 7 days';
-
-  @override
-  String get last30Days => 'Last 30 days';
 
   @override
   String results(num count) {

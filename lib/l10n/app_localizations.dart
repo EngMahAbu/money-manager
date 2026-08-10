@@ -136,10 +136,16 @@ abstract class AppLocalizations {
   /// **'Settings'**
   String get settings;
 
+  /// No description provided for @totalNetWorth.
+  ///
+  /// In en, this message translates to:
+  /// **'Total net worth'**
+  String get totalNetWorth;
+
   /// No description provided for @netWorth.
   ///
   /// In en, this message translates to:
-  /// **'Net Worth'**
+  /// **'Net worth'**
   String get netWorth;
 
   /// No description provided for @income.
@@ -160,6 +166,30 @@ abstract class AppLocalizations {
   /// **'Transfer'**
   String get transfer;
 
+  /// No description provided for @seeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get seeAll;
+
+  /// No description provided for @recentTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent transactions'**
+  String get recentTransactions;
+
+  /// No description provided for @archivedWithCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived ({count})'**
+  String archivedWithCount(Object count);
+
+  /// No description provided for @restore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get restore;
+
   /// No description provided for @addTransaction.
   ///
   /// In en, this message translates to:
@@ -172,16 +202,22 @@ abstract class AppLocalizations {
   /// **'Edit Transaction'**
   String get editTransaction;
 
+  /// No description provided for @newTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'New transaction'**
+  String get newTransaction;
+
   /// No description provided for @addAccount.
   ///
   /// In en, this message translates to:
-  /// **'Add Account'**
+  /// **'Add account'**
   String get addAccount;
 
   /// No description provided for @editAccount.
   ///
   /// In en, this message translates to:
-  /// **'Edit Account'**
+  /// **'Edit account'**
   String get editAccount;
 
   /// No description provided for @accountName.
@@ -214,23 +250,53 @@ abstract class AppLocalizations {
   /// **'Balance'**
   String get balance;
 
+  /// No description provided for @startingBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting balance'**
+  String get startingBalance;
+
   /// No description provided for @balanceHelper.
   ///
   /// In en, this message translates to:
-  /// **'Negative means money owed'**
+  /// **'Negative means money owed — matches how it\'s shown across the app'**
   String get balanceHelper;
 
   /// No description provided for @iconAndColor.
   ///
   /// In en, this message translates to:
-  /// **'Icon & Color'**
+  /// **'Icon and color'**
   String get iconAndColor;
 
   /// No description provided for @archiveAccount.
   ///
   /// In en, this message translates to:
-  /// **'Archive Account'**
+  /// **'Archive account'**
   String get archiveAccount;
+
+  /// No description provided for @bankAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank account'**
+  String get bankAccount;
+
+  /// No description provided for @cashAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash'**
+  String get cashAccount;
+
+  /// No description provided for @creditCardAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit card'**
+  String get creditCardAccount;
+
+  /// No description provided for @savingsAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings'**
+  String get savingsAccount;
 
   /// No description provided for @welcomeTitle.
   ///
@@ -250,29 +316,29 @@ abstract class AppLocalizations {
   /// **'Add My First Account'**
   String get addFirstAccount;
 
-  /// No description provided for @newTransaction.
+  /// No description provided for @thisMonth.
   ///
   /// In en, this message translates to:
-  /// **'New transaction'**
-  String get newTransaction;
+  /// **'This month'**
+  String get thisMonth;
 
-  /// No description provided for @totalNetWorth.
+  /// No description provided for @lastMonth.
   ///
   /// In en, this message translates to:
-  /// **'Total net worth'**
-  String get totalNetWorth;
+  /// **'Last month'**
+  String get lastMonth;
 
-  /// No description provided for @seeAll.
+  /// No description provided for @last7Days.
   ///
   /// In en, this message translates to:
-  /// **'See all'**
-  String get seeAll;
+  /// **'Last 7 days'**
+  String get last7Days;
 
-  /// No description provided for @recentTransactions.
+  /// No description provided for @last30Days.
   ///
   /// In en, this message translates to:
-  /// **'Recent transactions'**
-  String get recentTransactions;
+  /// **'Last 30 days'**
+  String get last30Days;
 
   /// No description provided for @searchTransactions.
   ///
@@ -309,30 +375,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All accounts'**
   String get allAccounts;
-
-  /// No description provided for @thisMonth.
-  ///
-  /// In en, this message translates to:
-  /// **'This month'**
-  String get thisMonth;
-
-  /// No description provided for @lastMonth.
-  ///
-  /// In en, this message translates to:
-  /// **'Last month'**
-  String get lastMonth;
-
-  /// No description provided for @last7Days.
-  ///
-  /// In en, this message translates to:
-  /// **'Last 7 days'**
-  String get last7Days;
-
-  /// No description provided for @last30Days.
-  ///
-  /// In en, this message translates to:
-  /// **'Last 30 days'**
-  String get last30Days;
 
   /// No description provided for @results.
   ///

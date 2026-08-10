@@ -9,8 +9,7 @@ import '../../shared/widgets/metric_card.dart';
 import '../../shared/widgets/list_row.dart';
 import '../../shared/widgets/transaction_row.dart';
 import '../../shared/widgets/section_header.dart';
-import '../../shared/widgets/bottom_nav_bar.dart';
-import '../transactions/add_edit_transaction_screen.dart';
+import '../accounts/accounts_screen.dart';
 import 'cubit/dashboard_cubit.dart';
 import 'cubit/dashboard_state.dart';
 import '../../data/database.dart';
@@ -23,8 +22,6 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  int _currentIndex = 0;
-
   @override
   void initState() {
     super.initState();
@@ -98,7 +95,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   SectionHeader(
                     title: l10n.accounts,
                     onActionPressed: () {
-                      // TODO: Navigate to Accounts screen
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => const AccountsScreen()),
+                      );
                     },
                   ),
                   const SizedBox(height: 8),

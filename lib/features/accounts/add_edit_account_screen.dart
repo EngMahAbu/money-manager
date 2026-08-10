@@ -34,7 +34,7 @@ class _AddEditAccountScreenState extends State<AddEditAccountScreen> {
     super.initState();
     _nameController = TextEditingController(text: widget.account?.name ?? '');
     _balanceController = TextEditingController(
-      text: widget.account?.startingBalance.toString() ?? '0.00',
+      text: widget.account?.startingBalance.toStringAsFixed(2) ?? '0.00',
     );
     _selectedType = widget.account?.type ?? AccountType.cash;
     _selectedCurrency = widget.account?.currency ?? 'USD';
@@ -79,17 +79,20 @@ class _AddEditAccountScreenState extends State<AddEditAccountScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final balanceValue = double.tryParse(_balanceController.text) ?? 0.0;
 
     return Scaffold(
+      backgroundColor: AppColors.surfacePage,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(TablerIcons.x),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(_isEdit ? l10n.editAccount : l10n.addAccount),
+        centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(TablerIcons.check),
+            icon: const Icon(TablerIcons.check, color: AppColors.accent),
             onPressed: _save,
           ),
         ],
@@ -99,13 +102,21 @@ class _AddEditAccountScreenState extends State<AddEditAccountScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(l10n.accountName, style: AppTextStyles.label),
+            const SizedBox(height: 6),
             TextField(
               controller: _nameController,
               decoration: InputDecoration(
-                hintText: l10n.accountName,
-                border: InputBorder.none,
+                hintText: 'e.g. Main bank',
+                filled: true,
+                fillColor: AppColors.surfaceInner,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(ThemeConstants.innerRadius),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
               ),
-              style: AppTextStyles.statValue,
+              style: AppTextStyles.body,
             ),
             const SizedBox(height: 20),
             Text(l10n.type, style: AppTextStyles.label),
@@ -116,7 +127,7 @@ class _AddEditAccountScreenState extends State<AddEditAccountScreen> {
               crossAxisCount: 2,
               mainAxisSpacing: 8,
               crossAxisSpacing: 8,
-              childAspectRatio: 2.5,
+              childAspectRatio: 3,
               children: AccountType.values.map((type) {
                 final isSelected = _selectedType == type;
                 return GestureDetector(
@@ -125,13 +136,13 @@ class _AddEditAccountScreenState extends State<AddEditAccountScreen> {
                     decoration: BoxDecoration(
                       color: isSelected ? AppColors.accentContainer : AppColors.surfaceInner,
                       borderRadius: BorderRadius.circular(ThemeConstants.innerRadius),
-                      border: isSelected ? Border.all(color: AppColors.accent) : null,
+                      border: isSelected ? Border.all(color: AppColors.accent, width: 0.5) : null,
                     ),
                     alignment: Alignment.center,
                     child: Text(
-                      type.name,
+                      _getAccountTypeLabel(type, l10n),
                       style: AppTextStyles.body.copyWith(
-                        color: isSelected ? AppColors.accentText : AppColors.textPrimary,
+                        color: isSelected ? AppColors.accentText : AppColors.textSecondary,
                         fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
                       ),
                     ),
@@ -140,44 +151,122 @@ class _AddEditAccountScreenState extends State<AddEditAccountScreen> {
               }).toList(),
             ),
             const SizedBox(height: 20),
+            Text(l10n.currency, style: AppTextStyles.label),
+            const SizedBox(height: 6),
             FieldRow(
               icon: TablerIcons.currency_dollar,
-              label: l10n.currency,
-              value: _selectedCurrency,
+              label: '$_selectedCurrency — US dollar',
               onTap: () {
                 // TODO: Currency Picker
               },
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 20),
+            Text(_isEdit ? l10n.balance : l10n.startingBalance, style: AppTextStyles.label),
+            const SizedBox(height: 6),
             TextField(
               controller: _balanceController,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
-                labelText: l10n.balance,
-                hintText: '0.00',
-                prefixIcon: const Icon(TablerIcons.calculator, size: 18),
-                helperText: l10n.balanceHelper,
+                filled: true,
+                fillColor: AppColors.surfaceInner,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(ThemeConstants.innerRadius),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+              ),
+              style: AppTextStyles.body.copyWith(
+                color: balanceValue < 0 ? AppColors.danger : AppColors.textPrimary,
               ),
             ),
+            if (_isEdit) ...[
+              const SizedBox(height: 4),
+              Text(
+                l10n.balanceHelper,
+                style: AppTextStyles.muted.copyWith(fontSize: 11),
+              ),
+            ],
             const SizedBox(height: 20),
             Text(l10n.iconAndColor, style: AppTextStyles.label),
             const SizedBox(height: 8),
-            // TODO: Icon & Color swatches
+            Row(
+              children: [
+                _buildIconSwatch(TablerIcons.building_bank, isSelected: true),
+                const SizedBox(width: 10),
+                _buildIconSwatch(TablerIcons.wallet),
+                const SizedBox(width: 10),
+                _buildIconSwatch(TablerIcons.credit_card),
+                const SizedBox(width: 10),
+                _buildIconSwatch(null), // Empty circle
+                const SizedBox(width: 10),
+                _buildAddIcon(),
+              ],
+            ),
             const SizedBox(height: 40),
             if (_isEdit)
-              Center(
+              Container(
+                decoration: const BoxDecoration(
+                  border: Border(top: BorderSide(color: AppColors.borderDefault, width: 0.5)),
+                ),
+                padding: const EdgeInsets.only(top: 12),
                 child: TextButton.icon(
                   onPressed: () {
                     context.read<AccountsCubit>().archiveAccount(widget.account!.id);
                     Navigator.of(context).pop();
                   },
-                  icon: const Icon(TablerIcons.archive, color: AppColors.textMuted),
-                  label: Text(l10n.archiveAccount, style: const TextStyle(color: AppColors.textMuted)),
+                  icon: const Icon(TablerIcons.archive, color: AppColors.textMuted, size: 16),
+                  label: Text(
+                    l10n.archiveAccount,
+                    style: AppTextStyles.body.copyWith(color: AppColors.textMuted, fontSize: 13),
+                  ),
                 ),
               ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildIconSwatch(IconData? icon, {bool isSelected = false}) {
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        color: isSelected ? AppColors.accent : AppColors.surfaceInner,
+        shape: BoxShape.circle,
+        border: isSelected ? Border.all(color: AppColors.accentText, width: 2) : null,
+      ),
+      alignment: Alignment.center,
+      child: icon != null 
+          ? Icon(icon, size: 18, color: isSelected ? Colors.white : AppColors.textSecondary)
+          : null,
+    );
+  }
+
+  Widget _buildAddIcon() {
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: AppColors.borderStrong, style: BorderStyle.solid), // Should be dashed
+      ),
+      alignment: Alignment.center,
+      child: const Icon(TablerIcons.plus, size: 18, color: AppColors.textMuted),
+    );
+  }
+
+  String _getAccountTypeLabel(AccountType type, AppLocalizations l10n) {
+    switch (type) {
+      case AccountType.cash:
+        return l10n.cashAccount;
+      case AccountType.bank:
+        return l10n.bankAccount;
+      case AccountType.creditCard:
+        return l10n.creditCardAccount;
+      case AccountType.savings:
+        return l10n.savingsAccount;
+    }
   }
 }

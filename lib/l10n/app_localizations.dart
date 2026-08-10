@@ -220,6 +220,18 @@ abstract class AppLocalizations {
   /// **'Edit account'**
   String get editAccount;
 
+  /// No description provided for @addCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Add category'**
+  String get addCategory;
+
+  /// No description provided for @editCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit category'**
+  String get editCategory;
+
   /// No description provided for @accountName.
   ///
   /// In en, this message translates to:
@@ -273,6 +285,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Archive account'**
   String get archiveAccount;
+
+  /// No description provided for @archiveCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive category'**
+  String get archiveCategory;
 
   /// No description provided for @bankAccount.
   ///

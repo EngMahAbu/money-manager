@@ -7,7 +7,6 @@ import '../../l10n/app_localizations.dart';
 import '../../shared/theme/app_colors.dart';
 import '../../shared/theme/app_text_styles.dart';
 import '../../shared/theme/theme_constants.dart';
-import '../../shared/widgets/bottom_nav_bar.dart';
 import '../../shared/widgets/filter_chip.dart';
 import '../../shared/widgets/transaction_row.dart';
 import '../accounts/cubit/accounts_cubit.dart';
@@ -17,8 +16,6 @@ import '../categories/cubit/categories_state.dart';
 import 'cubit/transactions_cubit.dart';
 import 'cubit/transactions_state.dart';
 import 'widgets/combined_filter_sheet.dart';
-import 'add_edit_transaction_screen.dart';
-
 import 'widgets/date_range_picker_sheet.dart';
 import 'widgets/multi_select_picker_sheet.dart';
 
@@ -32,7 +29,6 @@ class TransactionsScreen extends StatefulWidget {
 class _TransactionsScreenState extends State<TransactionsScreen> {
   final TextEditingController _searchController = TextEditingController();
   bool _isSearching = false;
-  int _currentIndex = 1;
 
   @override
   void initState() {
@@ -184,7 +180,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                               const SizedBox(width: 8),
                               AppFilterChip(
                                 label: state.accountIds?.length == 1 
-                                    ? 'Account selected' // Placeholder, ideally get the name
+                                    ? 'Account selected' 
                                     : (state.accountIds != null && state.accountIds!.isNotEmpty ? 'Multiple accounts' : l10n.allAccounts),
                                 isActive: state.accountIds?.isNotEmpty ?? false,
                                 onTap: () => _showAccountMultiSelect(state),
@@ -300,7 +296,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             children: [
               Text(dateStr, style: AppTextStyles.label.copyWith(fontWeight: FontWeight.w500)),
               Text(
-                '${group.total >= 0 ? '+' : '-'}\$${group.total.abs().toStringAsFixed(0)}',
+                '${group.total >= 0 ? '+' : '-'}\$${group.total.abs().toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
                 style: AppTextStyles.label.copyWith(
                   color: group.total >= 0 ? AppColors.success : AppColors.danger,
                 ),
@@ -308,28 +304,20 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             ],
           ),
         ),
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            color: AppColors.surfaceCard,
-            borderRadius: BorderRadius.circular(ThemeConstants.cardRadius),
-            border: Border.all(color: AppColors.borderDefault, width: 0.5),
-          ),
-          child: Column(
-            children: List.generate(group.transactions.length, (index) {
-              final tx = group.transactions[index];
-              return TransactionRow(
-                icon: tx.type == TransactionType.income ? TablerIcons.briefcase : TablerIcons.shopping_cart,
-                name: tx.note ?? (tx.type == TransactionType.income ? 'Income' : 'Expense'),
-                highlightQuery: _isSearching ? _searchController.text : null,
-                timestamp: 'Main bank', // TODO: Get account name
-                amount: tx.amount.toStringAsFixed(0),
-                isIncome: tx.type == TransactionType.income,
-                isTransfer: tx.type == TransactionType.transfer,
-                showDivider: index != group.transactions.length - 1,
-              );
-            }),
-          ),
+        Column(
+          children: List.generate(group.transactions.length, (index) {
+            final tx = group.transactions[index];
+            return TransactionRow(
+              icon: tx.type == TransactionType.income ? TablerIcons.briefcase : TablerIcons.shopping_cart,
+              name: tx.note ?? (tx.type == TransactionType.income ? 'Income' : 'Expense'),
+              highlightQuery: _isSearching ? _searchController.text : null,
+              timestamp: 'Main bank', 
+              amount: tx.amount.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},'),
+              isIncome: tx.type == TransactionType.income,
+              isTransfer: tx.type == TransactionType.transfer,
+              showDivider: true,
+            );
+          }),
         ),
       ],
     );

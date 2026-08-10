@@ -74,6 +74,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editAccount => 'Edit account';
 
   @override
+  String get addCategory => 'Add category';
+
+  @override
+  String get editCategory => 'Edit category';
+
+  @override
   String get accountName => 'Account Name';
 
   @override
@@ -100,6 +106,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get archiveAccount => 'Archive account';
+
+  @override
+  String get archiveCategory => 'Archive category';
 
   @override
   String get bankAccount => 'Bank account';

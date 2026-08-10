@@ -23,6 +23,8 @@
 
   "addAccount": "Add account",
   "editAccount": "Edit account",
+  "addCategory": "Add category",
+  "editCategory": "Edit category",
   "accountName": "Account Name",
   "categoryName": "Category Name",
   "type": "Type",
@@ -32,6 +34,7 @@
   "balanceHelper": "Negative means money owed — matches how it's shown across the app",
   "iconAndColor": "Icon and color",
   "archiveAccount": "Archive account",
+  "archiveCategory": "Archive category",
 
   "bankAccount": "Bank account",
   "cashAccount": "Cash",

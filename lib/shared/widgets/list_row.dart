@@ -7,7 +7,7 @@ class ListRow extends StatelessWidget {
   final Widget leading;
   final String label;
   final String? subtitle;
-  final String value;
+  final String? value;
   final Color? valueColor;
   final VoidCallback? onTap;
   final Widget? trailing;
@@ -17,7 +17,7 @@ class ListRow extends StatelessWidget {
     required this.leading,
     required this.label,
     this.subtitle,
-    required this.value,
+    this.value,
     this.valueColor,
     this.onTap,
     this.trailing,
@@ -51,13 +51,14 @@ class ListRow extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            Text(
-              value,
-              style: AppTextStyles.body.copyWith(
-                fontWeight: FontWeight.w500,
-                color: valueColor,
+            if (value != null)
+              Text(
+                value!,
+                style: AppTextStyles.body.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: valueColor,
+                ),
               ),
-            ),
             if (trailing != null) ...[
               const SizedBox(width: 8),
               trailing!,

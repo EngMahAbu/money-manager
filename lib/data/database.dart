@@ -59,7 +59,7 @@ class Budgets extends Table {
 @DriftDatabase(tables: [Accounts, Categories, Transactions, Budgets], daos: [AppDao])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
-  AppDatabase.forTesting(DatabaseConnection connection) : super(connection);
+  AppDatabase.forTesting(super.connection);
 
   @override
   int get schemaVersion => 1;

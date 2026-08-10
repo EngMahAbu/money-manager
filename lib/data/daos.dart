@@ -4,9 +4,15 @@ import 'database.dart';
 
 part 'daos.g.dart';
 
+class DateTimeDouble {
+  final DateTime date;
+  final double value;
+  DateTimeDouble(this.date, this.value);
+}
+
 @DriftAccessor(tables: [Accounts, Categories, Transactions, Budgets])
 class AppDao extends DatabaseAccessor<AppDatabase> with _$AppDaoMixin {
-  AppDao(AppDatabase db) : super(db);
+  AppDao(super.db);
 
   // Accounts CRUD
   Future<int> insertAccount(AccountsCompanion account) => into(accounts).insert(account);
@@ -20,6 +26,8 @@ class AppDao extends DatabaseAccessor<AppDatabase> with _$AppDaoMixin {
   // Categories CRUD
   Future<int> insertCategory(CategoriesCompanion category) => into(categories).insert(category);
   Future<bool> updateCategory(Category category) => update(categories).replace(category);
+  Stream<List<Category>> watchAllCategories() =>
+      (select(categories)..orderBy([(t) => OrderingTerm(expression: t.sortOrder)])).watch();
   Stream<List<Category>> watchCategoriesByType(CategoryType type) =>
       (select(categories)
             ..where((t) => t.type.equalsValue(type) & t.isArchived.equals(false))
@@ -45,10 +53,116 @@ class AppDao extends DatabaseAccessor<AppDatabase> with _$AppDaoMixin {
   Stream<List<Transaction>> watchTransactionsInRange(DateTime start, DateTime end) =>
       (select(transactions)..where((t) => t.date.isBetweenValues(start, end))).watch();
 
-  // Complex Queries (simplified for now, logic might move to Repository)
-  // For balance and net worth, we often need to join or do multiple aggregates.
-  // v1 simple version: watch all transactions and calculate in Dart or use specialized queries.
+  Stream<List<Transaction>> watchFilteredTransactions({
+    DateTime? startDate,
+    DateTime? endDate,
+    List<int>? accountIds,
+    List<int>? categoryIds,
+    String? searchQuery,
+    int? limit,
+  }) {
+    final query = select(transactions);
+    
+    query.where((t) {
+      Expression<bool> predicate = const Constant(true);
+
+      if (startDate != null && endDate != null) {
+        predicate = predicate & t.date.isBetweenValues(startDate, endDate);
+      }
+      
+      if (accountIds != null && accountIds.isNotEmpty) {
+        predicate = predicate & (t.accountId.isIn(accountIds) | t.toAccountId.isIn(accountIds));
+      }
+      
+      if (categoryIds != null && categoryIds.isNotEmpty) {
+        predicate = predicate & t.categoryId.isIn(categoryIds);
+      }
+      
+      if (searchQuery != null && searchQuery.trim().isNotEmpty) {
+        predicate = predicate & t.note.like('%${searchQuery.trim()}%');
+      }
+
+      return predicate;
+    });
+
+    query.orderBy([(t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)]);
+    
+    if (limit != null) {
+      query.limit(limit);
+    }
+    
+    return query.watch();
+  }
+
+  Stream<double> watchPeriodTotal(DateTime start, DateTime end, TransactionType type) {
+    final query = select(transactions)
+      ..where((t) => t.date.isBetweenValues(start, end) & t.type.equalsValue(type));
+    
+    return query.watch().map((list) => list.fold(0.0, (sum, t) => sum + t.amount));
+  }
+
+  Stream<Map<int, double>> watchCategoryBreakdown(DateTime start, DateTime end, List<int>? accountIds) {
+    final query = select(transactions)
+      ..where((t) {
+        Expression<bool> predicate = t.date.isBetweenValues(start, end) & t.categoryId.isNotNull();
+        if (accountIds != null && accountIds.isNotEmpty) {
+          predicate = predicate & t.accountId.isIn(accountIds);
+        }
+        return predicate;
+      });
+    
+    return query.watch().map((list) {
+      final map = <int, double>{};
+      for (final tx in list) {
+        map[tx.categoryId!] = (map[tx.categoryId!] ?? 0) + tx.amount;
+      }
+      return map;
+    });
+  }
   
+  Stream<List<DateTimeDouble>> watchBalanceTrend(DateTime start, DateTime end, List<int>? accountIds) {
+    final query = select(transactions)
+      ..where((t) {
+        Expression<bool> predicate = t.date.isSmallerOrEqualValue(end);
+        if (accountIds != null && accountIds.isNotEmpty) {
+          predicate = predicate & (t.accountId.isIn(accountIds) | t.toAccountId.isIn(accountIds));
+        }
+        return predicate;
+      })
+      ..orderBy([(t) => OrderingTerm(expression: t.date)]);
+      
+    final accountsQuery = select(accounts);
+    if (accountIds != null && accountIds.isNotEmpty) {
+      accountsQuery.where((t) => t.id.isIn(accountIds));
+    }
+
+    return Rx.combineLatest2(query.watch(), accountsQuery.watch(), (List<Transaction> txs, List<Account> selectedAccounts) {
+      double currentBalance = selectedAccounts.fold(0.0, (sum, a) => sum + a.startingBalance);
+      
+      final trend = <DateTimeDouble>[];
+      
+      for (final tx in txs) {
+        if (tx.type == TransactionType.income) {
+          currentBalance += tx.amount;
+        } else if (tx.type == TransactionType.expense) {
+          currentBalance -= tx.amount;
+        } else if (tx.type == TransactionType.transfer) {
+          final fromIn = accountIds == null || accountIds.contains(tx.accountId);
+          final toIn = tx.toAccountId != null && (accountIds == null || accountIds.contains(tx.toAccountId!));
+          
+          if (fromIn && !toIn) currentBalance -= tx.amount;
+          if (!fromIn && toIn) currentBalance += tx.amount;
+        }
+        
+        if (tx.date.isAfter(start) || tx.date.isAtSameMomentAs(start)) {
+          trend.add(DateTimeDouble(tx.date, currentBalance));
+        }
+      }
+      
+      return trend;
+    });
+  }
+
   Stream<List<Transaction>> watchAccountTransactions(int accountId) {
     return (select(transactions)..where((t) => t.accountId.equals(accountId) | t.toAccountId.equals(accountId))).watch();
   }
@@ -92,28 +206,7 @@ class AppDao extends DatabaseAccessor<AppDatabase> with _$AppDaoMixin {
           final account = activeAccounts[i];
           final balance = balances[i];
           if (account.type == AccountType.creditCard) {
-            netWorth -= balance; // Wait, if balance is positive (debt), subtract it. 
-            // Actually, the spec says "credit card balances subtracting rather than adding".
-            // If starting balance is 0 and I spend 100, the balance is -100.
-            // If I subtract -100, I add 100. That's wrong.
-            // "A creditCard account represents debt, so its balance should subtract from total net worth"
-            // Usually, debt is stored as a positive number in some apps, or negative in others.
-            // The spec says "Amounts are always stored positive; type (income/expense/transfer) is the sign source of truth."
-            // So if I have a credit card account, and I have an expense of 100, the "balance" calculated above will be startingBalance - 100.
-            // If starting balance was 0, balance is -100.
-            // Net worth should be: sum(assets) - sum(debts).
-            // If balance of credit card is -100, it means I owe 100? No, if I spend 100, it's -100.
-            // Let's re-read: "A creditCard account represents debt, so its balance should subtract from total net worth, while cash / bank / savings balances add."
-            // If I have $1000 in Bank and -$200 in Credit Card, Net Worth is $800.
-            // So I should just ADD all balances, provided credit card balances naturally go negative.
-            // "Negative-balance convention for credit cards" is mentioned in Milestone 5.5.
-            // Let's check 2.4: "Net worth = sum of active (non-archived) account balances, with credit card balances subtracting rather than adding (per AccountType)."
-            // This suggests that maybe credit card balances are stored/calculated as positive values for debt?
-            // "never store negative amounts" (Guardrails).
-            // But balance is calculated.
-            // If I follow "credit card balances subtracting", then if balance is 200 (debt), I subtract 200.
-            
-            netWorth -= balance;
+            netWorth -= balance; 
           } else {
             netWorth += balance;
           }
@@ -123,5 +216,3 @@ class AppDao extends DatabaseAccessor<AppDatabase> with _$AppDaoMixin {
     });
   }
 }
-
-// Need rxdart for Rx.combineLatestList and switchMap

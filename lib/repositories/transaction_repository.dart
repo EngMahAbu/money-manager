@@ -10,6 +10,31 @@ class TransactionRepository {
   Stream<List<Transaction>> watchTransactionsInRange(DateTime start, DateTime end) =>
       _dao.watchTransactionsInRange(start, end);
 
+  Stream<List<Transaction>> watchFilteredTransactions({
+    DateTime? startDate,
+    DateTime? endDate,
+    List<int>? accountIds,
+    List<int>? categoryIds,
+    String? searchQuery,
+    int? limit,
+  }) => _dao.watchFilteredTransactions(
+    startDate: startDate,
+    endDate: endDate,
+    accountIds: accountIds,
+    categoryIds: categoryIds,
+    searchQuery: searchQuery,
+    limit: limit,
+  );
+
+  Stream<double> watchPeriodTotal(DateTime start, DateTime end, TransactionType type) =>
+      _dao.watchPeriodTotal(start, end, type);
+
+  Stream<Map<int, double>> watchCategoryBreakdown(DateTime start, DateTime end, List<int>? accountIds) =>
+      _dao.watchCategoryBreakdown(start, end, accountIds);
+
+  Stream<List<DateTimeDouble>> watchBalanceTrend(DateTime start, DateTime end, List<int>? accountIds) =>
+      _dao.watchBalanceTrend(start, end, accountIds);
+
   Future<void> createTransaction(TransactionsCompanion tx) async {
     final validated = await _validateAndFormat(tx);
     await _dao.insertTransaction(validated);

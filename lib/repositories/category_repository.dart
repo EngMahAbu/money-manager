@@ -8,6 +8,7 @@ class CategoryRepository {
   CategoryRepository(this._dao);
 
   Stream<List<Category>> watchCategoriesByType(CategoryType type) => _dao.watchCategoriesByType(type);
+  Stream<List<Category>> watchAllCategories() => _dao.watchAllCategories();
   
   Future<Category> getCategoryById(int id) => _dao.getCategoryById(id);
 

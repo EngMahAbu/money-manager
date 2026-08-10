@@ -20,12 +20,15 @@ class ReportsCubit extends Cubit<ReportsState> {
     emit(state.copyWith(isLoading: true));
     _subscription?.cancel();
 
-    _subscription = Rx.combineLatest4(
+    _subscription = Rx.combineLatest6(
       _transactionRepository.watchPeriodTotal(startDate, endDate, TransactionType.income),
       _transactionRepository.watchPeriodTotal(startDate, endDate, TransactionType.expense),
       _transactionRepository.watchCategoryBreakdown(startDate, endDate, accountIds),
       _transactionRepository.watchBalanceTrend(startDate, endDate, accountIds),
-      (double income, double expense, Map<int, double> breakdown, List<DateTimeDouble> trend) {
+      _transactionRepository.watchMonthlyTotals(startDate, endDate, TransactionType.income),
+      _transactionRepository.watchMonthlyTotals(startDate, endDate, TransactionType.expense),
+      (double income, double expense, Map<int, double> breakdown, List<DateTimeDouble> trend,
+          List<DateTimeDouble> incomeSeries, List<DateTimeDouble> expenseSeries) {
         final percentages = _calculateLargestRemainderPercentages(breakdown);
         return ReportsState(
           totalIncome: income,
@@ -33,6 +36,8 @@ class ReportsCubit extends Cubit<ReportsState> {
           categoryBreakdown: breakdown,
           categoryPercentages: percentages,
           balanceTrend: trend,
+          monthlyIncomeSeries: incomeSeries,
+          monthlyExpenseSeries: expenseSeries,
           isLoading: false,
         );
       },

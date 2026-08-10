@@ -35,6 +35,9 @@ class TransactionRepository {
   Stream<List<DateTimeDouble>> watchBalanceTrend(DateTime start, DateTime end, List<int>? accountIds) =>
       _dao.watchBalanceTrend(start, end, accountIds);
 
+  Stream<List<DateTimeDouble>> watchMonthlyTotals(DateTime start, DateTime end, TransactionType type) =>
+      _dao.watchMonthlyTotals(start, end, type);
+
   Future<void> createTransaction(TransactionsCompanion tx) async {
     final validated = await _validateAndFormat(tx);
     await _dao.insertTransaction(validated);

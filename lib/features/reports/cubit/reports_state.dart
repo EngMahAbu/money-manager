@@ -5,6 +5,8 @@ class ReportsState extends Equatable {
   final Map<int, double> categoryBreakdown;
   final Map<int, double> categoryPercentages; // Largest-remainder rounded
   final List<DateTimeDouble> balanceTrend;
+  final List<DateTimeDouble> monthlyIncomeSeries;
+  final List<DateTimeDouble> monthlyExpenseSeries;
   final double totalIncome;
   final double totalExpense;
   final bool isLoading;
@@ -14,6 +16,8 @@ class ReportsState extends Equatable {
     this.categoryBreakdown = const {},
     this.categoryPercentages = const {},
     this.balanceTrend = const [],
+    this.monthlyIncomeSeries = const [],
+    this.monthlyExpenseSeries = const [],
     this.totalIncome = 0,
     this.totalExpense = 0,
     this.isLoading = false,
@@ -24,6 +28,8 @@ class ReportsState extends Equatable {
     Map<int, double>? categoryBreakdown,
     Map<int, double>? categoryPercentages,
     List<DateTimeDouble>? balanceTrend,
+    List<DateTimeDouble>? monthlyIncomeSeries,
+    List<DateTimeDouble>? monthlyExpenseSeries,
     double? totalIncome,
     double? totalExpense,
     bool? isLoading,
@@ -33,6 +39,8 @@ class ReportsState extends Equatable {
       categoryBreakdown: categoryBreakdown ?? this.categoryBreakdown,
       categoryPercentages: categoryPercentages ?? this.categoryPercentages,
       balanceTrend: balanceTrend ?? this.balanceTrend,
+      monthlyIncomeSeries: monthlyIncomeSeries ?? this.monthlyIncomeSeries,
+      monthlyExpenseSeries: monthlyExpenseSeries ?? this.monthlyExpenseSeries,
       totalIncome: totalIncome ?? this.totalIncome,
       totalExpense: totalExpense ?? this.totalExpense,
       isLoading: isLoading ?? this.isLoading,
@@ -45,6 +53,8 @@ class ReportsState extends Equatable {
         categoryBreakdown,
         categoryPercentages,
         balanceTrend,
+        monthlyIncomeSeries,
+        monthlyExpenseSeries,
         totalIncome,
         totalExpense,
         isLoading,

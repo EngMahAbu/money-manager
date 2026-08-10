@@ -163,6 +163,31 @@ class AppDao extends DatabaseAccessor<AppDatabase> with _$AppDaoMixin {
     });
   }
 
+  Stream<List<DateTimeDouble>> watchMonthlyTotals(DateTime start, DateTime end, TransactionType type) {
+    final query = select(transactions)
+      ..where((t) => t.date.isBetweenValues(start, end) & t.type.equalsValue(type));
+
+    return query.watch().map((txs) {
+      final totals = <DateTime, double>{};
+      for (final tx in txs) {
+        final monthKey = DateTime(tx.date.year, tx.date.month);
+        totals[monthKey] = (totals[monthKey] ?? 0) + tx.amount;
+      }
+
+      // Ensure all months in range are present
+      final result = <DateTimeDouble>[];
+      DateTime current = DateTime(start.year, start.month);
+      DateTime last = DateTime(end.year, end.month);
+
+      while (current.isBefore(last) || current.isAtSameMomentAs(last)) {
+        result.add(DateTimeDouble(current, totals[current] ?? 0.0));
+        current = DateTime(current.year, current.month + 1);
+      }
+
+      return result;
+    });
+  }
+
   Stream<List<Transaction>> watchAccountTransactions(int accountId) {
     return (select(transactions)..where((t) => t.accountId.equals(accountId) | t.toAccountId.equals(accountId))).watch();
   }

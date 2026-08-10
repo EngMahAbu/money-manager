@@ -358,6 +358,36 @@ abstract class AppLocalizations {
   /// **'Last 30 days'**
   String get last30Days;
 
+  /// No description provided for @last6Months.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 6 months'**
+  String get last6Months;
+
+  /// No description provided for @incomeVsExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Income vs expense'**
+  String get incomeVsExpense;
+
+  /// No description provided for @spendingByCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending by category'**
+  String get spendingByCategory;
+
+  /// No description provided for @balanceTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance trend'**
+  String get balanceTrend;
+
+  /// No description provided for @total.
+  ///
+  /// In en, this message translates to:
+  /// **'total'**
+  String get total;
+
   /// No description provided for @searchTransactions.
   ///
   /// In en, this message translates to:

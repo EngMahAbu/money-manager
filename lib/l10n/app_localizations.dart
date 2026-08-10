@@ -172,6 +172,18 @@ abstract class AppLocalizations {
   /// **'Edit Transaction'**
   String get editTransaction;
 
+  /// No description provided for @addAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Account'**
+  String get addAccount;
+
+  /// No description provided for @editAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Account'**
+  String get editAccount;
+
   /// No description provided for @accountName.
   ///
   /// In en, this message translates to:
@@ -183,6 +195,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Category Name'**
   String get categoryName;
+
+  /// No description provided for @type.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get type;
+
+  /// No description provided for @currency.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get currency;
+
+  /// No description provided for @balance.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance'**
+  String get balance;
+
+  /// No description provided for @balanceHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Negative means money owed'**
+  String get balanceHelper;
+
+  /// No description provided for @iconAndColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Icon & Color'**
+  String get iconAndColor;
+
+  /// No description provided for @archiveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive Account'**
+  String get archiveAccount;
+
+  /// No description provided for @welcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Money Manager'**
+  String get welcomeTitle;
+
+  /// No description provided for @onboardingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'To get started, you need to add your first account. This could be your cash wallet, bank account, or a credit card.'**
+  String get onboardingSubtitle;
+
+  /// No description provided for @addFirstAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Add My First Account'**
+  String get addFirstAccount;
 
   /// No description provided for @errorEmptyName.
   ///

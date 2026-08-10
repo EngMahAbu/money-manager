@@ -1,31 +1,104 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'data/database.dart';
+import 'data/daos.dart';
+import 'repositories/account_repository.dart';
+import 'repositories/category_repository.dart';
+import 'repositories/transaction_repository.dart';
+import 'features/accounts/cubit/accounts_cubit.dart';
+import 'features/accounts/cubit/accounts_state.dart';
+import 'features/onboarding/onboarding_screen.dart';
+import 'features/dashboard/dashboard_screen.dart';
 import 'l10n/app_localizations.dart';
 import 'shared/theme/app_theme.dart';
-import 'shared/widgets/gallery_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  final database = AppDatabase();
+  final dao = AppDao(database);
+
+  runApp(MyApp(
+    accountRepository: AccountRepository(dao),
+    categoryRepository: CategoryRepository(dao),
+    transactionRepository: TransactionRepository(dao),
+  ));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final AccountRepository accountRepository;
+  final CategoryRepository categoryRepository;
+  final TransactionRepository transactionRepository;
+
+  const MyApp({
+    super.key,
+    required this.accountRepository,
+    required this.categoryRepository,
+    required this.transactionRepository,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider.value(value: accountRepository),
+        RepositoryProvider.value(value: categoryRepository),
+        RepositoryProvider.value(value: transactionRepository),
       ],
-      supportedLocales: const [
-        Locale('en', ''),
-      ],
-      theme: AppTheme.light,
-      home: const ComponentGalleryScreen(),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => AccountsCubit(accountRepository)..loadAccounts(),
+          ),
+        ],
+        child: MaterialApp(
+          onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en', ''),
+          ],
+          theme: AppTheme.light,
+          home: const AppGate(),
+        ),
+      ),
+    );
+  }
+}
+
+class AppGate extends StatelessWidget {
+  const AppGate({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<AccountsCubit, AccountsState>(
+      builder: (context, state) {
+        if (state is AccountsLoading || state is AccountsInitial) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (state is AccountsLoaded) {
+          if (state.activeAccounts.isEmpty) {
+            return const OnboardingScreen();
+          } else {
+            return const DashboardScreen();
+          }
+        }
+
+        if (state is AccountsError) {
+          return Scaffold(
+            body: Center(child: Text(state.message)),
+          );
+        }
+
+        return const SizedBox.shrink();
+      },
     );
   }
 }

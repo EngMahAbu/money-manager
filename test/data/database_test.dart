@@ -63,7 +63,7 @@ void main() {
     test('Can insert and delete transaction', () async {
       final accountId = await dao.insertAccount(AccountsCompanion.insert(name: 'Bank', type: AccountType.bank));
       
-      final txId = await dao.insertTransaction(TransactionsCompanion.insert(
+      await dao.insertTransaction(TransactionsCompanion.insert(
         accountId: accountId,
         type: TransactionType.expense,
         amount: 50.0,

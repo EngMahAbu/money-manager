@@ -1,30 +1,28 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:mocktail/mocktail.dart';
 import 'package:money_manager/main.dart';
+import 'package:money_manager/repositories/account_repository.dart';
+import 'package:money_manager/repositories/category_repository.dart';
+import 'package:money_manager/repositories/transaction_repository.dart';
+
+class MockAccountRepository extends Mock implements AccountRepository {}
+class MockCategoryRepository extends Mock implements CategoryRepository {}
+class MockTransactionRepository extends Mock implements TransactionRepository {}
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Smoke test - App starts', (WidgetTester tester) async {
+    final accountRepository = MockAccountRepository();
+    final categoryRepository = MockCategoryRepository();
+    final transactionRepository = MockTransactionRepository();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    when(() => accountRepository.watchAllAccounts()).thenAnswer((_) => Stream.value([]));
+    
+    await tester.pumpWidget(MyApp(
+      accountRepository: accountRepository,
+      categoryRepository: categoryRepository,
+      transactionRepository: transactionRepository,
+    ));
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.byType(MyApp), findsOneWidget);
   });
 }

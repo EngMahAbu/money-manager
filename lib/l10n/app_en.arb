@@ -14,9 +14,21 @@
 
   "addTransaction": "Add Transaction",
   "editTransaction": "Edit Transaction",
+  "addAccount": "Add Account",
+  "editAccount": "Edit Account",
 
   "accountName": "Account Name",
   "categoryName": "Category Name",
+  "type": "Type",
+  "currency": "Currency",
+  "balance": "Balance",
+  "balanceHelper": "Negative means money owed",
+  "iconAndColor": "Icon & Color",
+  "archiveAccount": "Archive Account",
+
+  "welcomeTitle": "Welcome to Money Manager",
+  "onboardingSubtitle": "To get started, you need to add your first account. This could be your cash wallet, bank account, or a credit card.",
+  "addFirstAccount": "Add My First Account",
 
   "errorEmptyName": "Name cannot be empty",
   "errorDuplicateAccountName": "Account name must be unique",

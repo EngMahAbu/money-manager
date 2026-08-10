@@ -48,10 +48,44 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editTransaction => 'Edit Transaction';
 
   @override
+  String get addAccount => 'Add Account';
+
+  @override
+  String get editAccount => 'Edit Account';
+
+  @override
   String get accountName => 'Account Name';
 
   @override
   String get categoryName => 'Category Name';
+
+  @override
+  String get type => 'Type';
+
+  @override
+  String get currency => 'Currency';
+
+  @override
+  String get balance => 'Balance';
+
+  @override
+  String get balanceHelper => 'Negative means money owed';
+
+  @override
+  String get iconAndColor => 'Icon & Color';
+
+  @override
+  String get archiveAccount => 'Archive Account';
+
+  @override
+  String get welcomeTitle => 'Welcome to Money Manager';
+
+  @override
+  String get onboardingSubtitle =>
+      'To get started, you need to add your first account. This could be your cash wallet, bank account, or a credit card.';
+
+  @override
+  String get addFirstAccount => 'Add My First Account';
 
   @override
   String get errorEmptyName => 'Name cannot be empty';

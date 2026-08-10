@@ -41,7 +41,7 @@ class Transactions extends Table {
   IntColumn get toAccountId => integer().nullable().references(Accounts, #id)();
   DateTimeColumn get date => dateTime()();
   TextColumn get note => text().nullable()();
-  TextColumn get receiptPhotoPath => text().nullable()();
+  TextColumn get receipts => text().nullable()(); // Changed from receiptPhotoPath to receipts to support multiple
 }
 
 class Budgets extends Table {
@@ -59,6 +59,7 @@ class Budgets extends Table {
 @DriftDatabase(tables: [Accounts, Categories, Transactions, Budgets], daos: [AppDao])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
+  AppDatabase.forTesting(DatabaseConnection connection) : super(connection);
 
   @override
   int get schemaVersion => 1;

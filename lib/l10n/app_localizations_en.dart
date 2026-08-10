@@ -30,6 +30,54 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings => 'Settings';
 
   @override
+  String get general => 'General';
+
+  @override
+  String get defaultCurrency => 'Default currency';
+
+  @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get system => 'System';
+
+  @override
+  String get light => 'Light';
+
+  @override
+  String get dark => 'Dark';
+
+  @override
+  String get manage => 'Manage';
+
+  @override
+  String get security => 'Security';
+
+  @override
+  String get appLock => 'App lock';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get dailyReminder => 'Daily reminder';
+
+  @override
+  String get data => 'Data';
+
+  @override
+  String get exportData => 'Export data';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String get version => 'Version';
+
+  @override
+  String get sendFeedback => 'Send feedback';
+
+  @override
   String get totalNetWorth => 'Total net worth';
 
   @override

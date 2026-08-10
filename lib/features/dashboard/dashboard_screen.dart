@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:intl/intl.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/theme/app_colors.dart';
 import '../../shared/theme/app_text_styles.dart';
@@ -10,6 +11,8 @@ import '../../shared/widgets/list_row.dart';
 import '../../shared/widgets/transaction_row.dart';
 import '../../shared/widgets/section_header.dart';
 import '../accounts/accounts_screen.dart';
+import '../accounts/account_detail_screen.dart';
+import '../../repositories/account_repository.dart';
 import 'cubit/dashboard_cubit.dart';
 import 'cubit/dashboard_state.dart';
 import '../../data/database.dart';
@@ -31,6 +34,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final accountRepository = context.read<AccountRepository>();
 
     return Scaffold(
       backgroundColor: AppColors.surfacePage,
@@ -73,7 +77,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Expanded(
                         child: MetricCard(
                           label: l10n.income,
-                          value: '\$${state.monthlyIncome.toStringAsFixed(0)}',
+                          value: '\$${state.monthlyIncome.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
                           icon: TablerIcons.arrow_down,
                           isSuccess: true,
                         ),
@@ -82,7 +86,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Expanded(
                         child: MetricCard(
                           label: l10n.expense,
-                          value: '\$${state.monthlyExpense.toStringAsFixed(0)}',
+                          value: '\$${state.monthlyExpense.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
                           icon: TablerIcons.arrow_up,
                           isSuccess: false,
                         ),
@@ -127,13 +131,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                         return Padding(
                           padding: EdgeInsets.only(bottom: index == state.topAccounts.length - 1 ? 0 : 8),
-                          child: ListRow(
-                            leading: Icon(accountIcon, size: 18, color: AppColors.textSecondary),
-                            label: account.name,
-                            value: '\$${account.startingBalance.toStringAsFixed(0)}',
-                            valueColor: account.startingBalance < 0 ? AppColors.dangerText : null,
-                            onTap: () {
-                              // TODO: Navigate to Account Detail
+                          child: StreamBuilder<double>(
+                            stream: accountRepository.watchAccountBalance(account.id),
+                            initialData: account.startingBalance,
+                            builder: (context, snapshot) {
+                              final balance = snapshot.data ?? account.startingBalance;
+                              return ListRow(
+                                leading: Icon(accountIcon, size: 18, color: AppColors.textSecondary),
+                                label: account.name,
+                                value: '\$${balance.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                                valueColor: balance < 0 ? AppColors.dangerText : null,
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(builder: (context) => AccountDetailScreen(account: account)),
+                                  );
+                                },
+                              );
                             },
                           ),
                         );
@@ -146,7 +159,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   SectionHeader(
                     title: l10n.recentTransactions,
                     onActionPressed: () {
-                      // TODO: Navigate to Transactions screen
+                      // Navigate to Transactions tab - handled by HomeScreen
+                      // For now, we don't have an easy way to switch tabs from here without passing a callback
                     },
                   ),
                   const SizedBox(height: 8),
@@ -162,8 +176,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         return TransactionRow(
                           icon: tx.type == TransactionType.income ? TablerIcons.briefcase : TablerIcons.shopping_cart,
                           name: tx.note ?? (tx.type == TransactionType.income ? 'Income' : 'Expense'),
-                          timestamp: 'Today', // TODO: Format date
-                          amount: tx.amount.toStringAsFixed(0),
+                          timestamp: DateFormat('MMM d').format(tx.date),
+                          amount: tx.amount.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},'),
                           isIncome: tx.type == TransactionType.income,
                           isTransfer: tx.type == TransactionType.transfer,
                           showDivider: index != state.recentTransactions.length - 1,

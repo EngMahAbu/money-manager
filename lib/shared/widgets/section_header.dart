@@ -16,31 +16,37 @@ class SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    Widget content = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(title, style: AppTextStyles.sectionHeader),
         if (onActionPressed != null)
-          GestureDetector(
-            onTap: onActionPressed,
-            behavior: HitTestBehavior.opaque,
-            child: Row(
-              children: [
-                if (actionLabel != null)
-                  Text(
-                    actionLabel!,
-                    style: AppTextStyles.label.copyWith(color: AppColors.accent),
-                  ),
-                if (actionLabel == null)
-                  const Icon(
-                    Icons.chevron_right,
-                    size: 16,
-                    color: AppColors.textMuted,
-                  ),
-              ],
-            ),
+          Row(
+            children: [
+              if (actionLabel != null)
+                Text(
+                  actionLabel!,
+                  style: AppTextStyles.label.copyWith(color: AppColors.accent),
+                ),
+              if (actionLabel == null)
+                const Icon(
+                  Icons.chevron_right,
+                  size: 16,
+                  color: AppColors.textMuted,
+                ),
+            ],
           ),
       ],
     );
+
+    if (onActionPressed != null) {
+      return GestureDetector(
+        onTap: onActionPressed,
+        behavior: HitTestBehavior.opaque,
+        child: content,
+      );
+    }
+
+    return content;
   }
 }

@@ -1,0 +1,32 @@
+{
+  "appTitle": "Money Manager",
+  "dashboard": "Dashboard",
+  "transactions": "Transactions",
+  "accounts": "Accounts",
+  "categories": "Categories",
+  "reports": "Reports",
+  "settings": "Settings",
+
+  "netWorth": "Net Worth",
+  "income": "Income",
+  "expense": "Expense",
+  "transfer": "Transfer",
+
+  "addTransaction": "Add Transaction",
+  "editTransaction": "Edit Transaction",
+
+  "accountName": "Account Name",
+  "categoryName": "Category Name",
+
+  "errorEmptyName": "Name cannot be empty",
+  "errorDuplicateAccountName": "Account name must be unique",
+  "errorLockedCurrency": "Currency is locked because this account has transactions",
+  "errorLastAccount": "Cannot archive the last active account",
+  "errorLockedCategoryType": "Category type is locked because it has transactions",
+  "errorAmountZero": "Amount must be greater than 0",
+  "errorFutureDate": "Future dates are not allowed",
+  "errorTransferNoCategory": "Transfers cannot have a category",
+  "errorTransferSameAccount": "Cannot transfer to the same account",
+  "errorNoteLimit": "Note cannot exceed 150 characters",
+  "errorReceiptLimit": "Maximum 5 receipts allowed"
+}

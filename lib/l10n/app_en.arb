@@ -31,6 +31,9 @@
   "addFirstAccount": "Add My First Account",
 
   "newTransaction": "New transaction",
+  "totalNetWorth": "Total net worth",
+  "seeAll": "See all",
+  "recentTransactions": "Recent transactions",
   "chooseAccount": "Choose account",
   "chooseCategory": "Choose category",
   "chooseDate": "Choose date",

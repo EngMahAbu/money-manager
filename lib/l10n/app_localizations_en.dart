@@ -91,6 +91,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get newTransaction => 'New transaction';
 
   @override
+  String get totalNetWorth => 'Total net worth';
+
+  @override
+  String get seeAll => 'See all';
+
+  @override
+  String get recentTransactions => 'Recent transactions';
+
+  @override
   String get chooseAccount => 'Choose account';
 
   @override

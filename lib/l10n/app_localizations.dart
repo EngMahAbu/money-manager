@@ -256,6 +256,24 @@ abstract class AppLocalizations {
   /// **'New transaction'**
   String get newTransaction;
 
+  /// No description provided for @totalNetWorth.
+  ///
+  /// In en, this message translates to:
+  /// **'Total net worth'**
+  String get totalNetWorth;
+
+  /// No description provided for @seeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get seeAll;
+
+  /// No description provided for @recentTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent transactions'**
+  String get recentTransactions;
+
   /// No description provided for @chooseAccount.
   ///
   /// In en, this message translates to:

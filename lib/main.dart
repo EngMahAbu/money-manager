@@ -8,8 +8,9 @@ import 'repositories/category_repository.dart';
 import 'repositories/transaction_repository.dart';
 import 'features/accounts/cubit/accounts_cubit.dart';
 import 'features/accounts/cubit/accounts_state.dart';
-import 'features/onboarding/onboarding_screen.dart';
+import 'features/dashboard/cubit/dashboard_cubit.dart';
 import 'features/dashboard/dashboard_screen.dart';
+import 'features/onboarding/onboarding_screen.dart';
 import 'l10n/app_localizations.dart';
 import 'shared/theme/app_theme.dart';
 
@@ -49,6 +50,9 @@ class MyApp extends StatelessWidget {
         providers: [
           BlocProvider(
             create: (context) => AccountsCubit(accountRepository)..loadAccounts(),
+          ),
+          BlocProvider(
+            create: (context) => DashboardCubit(accountRepository, transactionRepository),
           ),
         ],
         child: MaterialApp(

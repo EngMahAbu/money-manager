@@ -55,7 +55,6 @@ class _ComponentGalleryScreenState extends State<ComponentGalleryScreen> {
             const SizedBox(height: 20),
             SectionHeader(
               title: 'Accounts',
-              actionLabel: 'See all',
               onActionPressed: () {},
             ),
             const SizedBox(height: 12),

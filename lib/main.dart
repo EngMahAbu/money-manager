@@ -8,9 +8,13 @@ import 'repositories/category_repository.dart';
 import 'repositories/transaction_repository.dart';
 import 'features/accounts/cubit/accounts_cubit.dart';
 import 'features/accounts/cubit/accounts_state.dart';
+import 'features/categories/cubit/categories_cubit.dart';
+import 'features/transactions/cubit/transactions_cubit.dart';
+import 'features/reports/cubit/reports_cubit.dart';
+import 'features/settings/cubit/settings_cubit.dart';
 import 'features/dashboard/cubit/dashboard_cubit.dart';
-import 'features/dashboard/dashboard_screen.dart';
 import 'features/onboarding/onboarding_screen.dart';
+import 'features/home/home_screen.dart';
 import 'l10n/app_localizations.dart';
 import 'shared/theme/app_theme.dart';
 
@@ -52,7 +56,19 @@ class MyApp extends StatelessWidget {
             create: (context) => AccountsCubit(accountRepository)..loadAccounts(),
           ),
           BlocProvider(
+            create: (context) => CategoriesCubit(categoryRepository)..loadCategories(),
+          ),
+          BlocProvider(
+            create: (context) => TransactionsCubit(transactionRepository),
+          ),
+          BlocProvider(
             create: (context) => DashboardCubit(accountRepository, transactionRepository),
+          ),
+          BlocProvider(
+            create: (context) => ReportsCubit(transactionRepository),
+          ),
+          BlocProvider(
+            create: (context) => SettingsCubit(),
           ),
         ],
         child: MaterialApp(
@@ -91,7 +107,7 @@ class AppGate extends StatelessWidget {
           if (state.activeAccounts.isEmpty) {
             return const OnboardingScreen();
           } else {
-            return const DashboardScreen();
+            return const HomeScreen();
           }
         }
 

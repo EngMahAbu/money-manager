@@ -88,6 +88,64 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addFirstAccount => 'Add My First Account';
 
   @override
+  String get newTransaction => 'New transaction';
+
+  @override
+  String get chooseAccount => 'Choose account';
+
+  @override
+  String get chooseCategory => 'Choose category';
+
+  @override
+  String get chooseDate => 'Choose date';
+
+  @override
+  String get from => 'From';
+
+  @override
+  String get to => 'To';
+
+  @override
+  String get account => 'Account';
+
+  @override
+  String get category => 'Category';
+
+  @override
+  String get date => 'Date';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get yesterday => 'Yesterday';
+
+  @override
+  String get apply => 'Apply';
+
+  @override
+  String get addNote => 'Add a note';
+
+  @override
+  String get receipts => 'Receipts';
+
+  @override
+  String get addAccountAction => 'Add account';
+
+  @override
+  String get addCategoryAction => 'Add category';
+
+  @override
+  String get searchCategories => 'Search categories...';
+
+  @override
+  String get clearToAccountMessage =>
+      'Clear \"To\" account before changing type';
+
+  @override
+  String get clearCategoryMessage => 'Clear category before changing type';
+
+  @override
   String get errorEmptyName => 'Name cannot be empty';
 
   @override

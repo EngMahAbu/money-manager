@@ -250,6 +250,120 @@ abstract class AppLocalizations {
   /// **'Add My First Account'**
   String get addFirstAccount;
 
+  /// No description provided for @newTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'New transaction'**
+  String get newTransaction;
+
+  /// No description provided for @chooseAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose account'**
+  String get chooseAccount;
+
+  /// No description provided for @chooseCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose category'**
+  String get chooseCategory;
+
+  /// No description provided for @chooseDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose date'**
+  String get chooseDate;
+
+  /// No description provided for @from.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get from;
+
+  /// No description provided for @to.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get to;
+
+  /// No description provided for @account.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get account;
+
+  /// No description provided for @category.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get category;
+
+  /// No description provided for @date.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get date;
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get yesterday;
+
+  /// No description provided for @apply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get apply;
+
+  /// No description provided for @addNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a note'**
+  String get addNote;
+
+  /// No description provided for @receipts.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipts'**
+  String get receipts;
+
+  /// No description provided for @addAccountAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add account'**
+  String get addAccountAction;
+
+  /// No description provided for @addCategoryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add category'**
+  String get addCategoryAction;
+
+  /// No description provided for @searchCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Search categories...'**
+  String get searchCategories;
+
+  /// No description provided for @clearToAccountMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear \"To\" account before changing type'**
+  String get clearToAccountMessage;
+
+  /// No description provided for @clearCategoryMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear category before changing type'**
+  String get clearCategoryMessage;
+
   /// No description provided for @errorEmptyName.
   ///
   /// In en, this message translates to:

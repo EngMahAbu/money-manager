@@ -41,6 +41,12 @@ class AppDao extends DatabaseAccessor<AppDatabase> with _$AppDaoMixin {
   Future<Category> getCategoryById(int id) =>
       (select(categories)..where((t) => t.id.equals(id))).getSingle();
 
+  Future<bool> categoryHasTransactions(int categoryId) async {
+    final query = select(transactions)..where((t) => t.categoryId.equals(categoryId))..limit(1);
+    final results = await query.get();
+    return results.isNotEmpty;
+  }
+
   // Transactions CRUD
   Future<int> insertTransaction(TransactionsCompanion transaction) =>
       into(transactions).insert(transaction);

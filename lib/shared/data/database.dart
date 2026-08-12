@@ -63,7 +63,7 @@ class Transactions extends Table {
 
   TextColumn get note => text().nullable()();
 
-  TextColumn get receiptPhotoPath => text().nullable()();
+  TextColumn get receipts => text().nullable()();
 }
 
 class Budgets extends Table {
@@ -86,6 +86,8 @@ class Budgets extends Table {
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
+
+  AppDatabase.forTesting(DatabaseConnection connection) : super(connection);
 
   @override
   int get schemaVersion => 1;

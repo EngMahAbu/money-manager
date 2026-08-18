@@ -12,6 +12,7 @@ import '../../shared/widgets/transaction_row.dart';
 import '../../shared/widgets/section_header.dart';
 import '../transactions/cubit/transactions_cubit.dart';
 import '../transactions/cubit/transactions_state.dart';
+import '../transactions/transactions_screen.dart';
 import 'add_edit_account_screen.dart';
 import '../../repositories/account_repository.dart';
 
@@ -165,7 +166,14 @@ class _AccountDetailScreenState extends State<AccountDetailScreen> {
               title: l10n.transactions,
               actionLabel: l10n.seeAll,
               onActionPressed: () {
-                // TODO: Navigate to full transactions filtered by this account
+                context.read<TransactionsCubit>().loadTransactions(
+                  accountIds: [widget.account.id],
+                );
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const TransactionsScreen(),
+                  ),
+                );
               },
             ),
             const SizedBox(height: 8),

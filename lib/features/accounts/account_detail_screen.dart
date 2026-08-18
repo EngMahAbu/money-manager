@@ -33,6 +33,30 @@ class _AccountDetailScreenState extends State<AccountDetailScreen> {
     );
   }
 
+  // Calculate monthly income and expense from transactions
+  Map<String, double> _calculateMonthlyTotals(List<Transaction> transactions) {
+    final now = DateTime.now();
+    final monthStart = DateTime(now.year, now.month, 1);
+    final monthEnd = DateTime(now.year, now.month + 1, 0, 23, 59, 59, 999);
+
+    double income = 0.0;
+    double expense = 0.0;
+
+    for (final tx in transactions) {
+      if (tx.date.isAfter(monthStart) || tx.date.isAtSameMomentAs(monthStart)) {
+        if (tx.date.isBefore(monthEnd) || tx.date.isAtSameMomentAs(monthEnd)) {
+          if (tx.type == TransactionType.income) {
+            income += tx.amount;
+          } else if (tx.type == TransactionType.expense) {
+            expense += tx.amount;
+          }
+        }
+      }
+    }
+
+    return {'income': income, 'expense': expense};
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -100,27 +124,39 @@ class _AccountDetailScreenState extends State<AccountDetailScreen> {
             const SizedBox(height: 12),
 
             // Monthly Summary
-            const Row(
-              children: [
-                // TODO: populate these two views with actual data
-                Expanded(
-                  child: MetricCard(
-                    label: 'This month',
-                    value: '+\$3,200',
-                    icon: TablerIcons.arrow_down,
-                    isSuccess: true,
-                  ),
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: MetricCard(
-                    label: 'This month',
-                    value: '-\$82',
-                    icon: TablerIcons.arrow_up,
-                    isSuccess: false,
-                  ),
-                ),
-              ],
+            BlocBuilder<TransactionsCubit, TransactionsState>(
+              builder: (context, state) {
+                double monthlyIncome = 0.0;
+                double monthlyExpense = 0.0;
+
+                if (state is TransactionsLoaded) {
+                  final totals = _calculateMonthlyTotals(state.transactions);
+                  monthlyIncome = totals['income'] ?? 0.0;
+                  monthlyExpense = totals['expense'] ?? 0.0;
+                }
+
+                return Row(
+                  children: [
+                    Expanded(
+                      child: MetricCard(
+                        label: 'This month',
+                        value: '+\$${monthlyIncome.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                        icon: TablerIcons.arrow_down,
+                        isSuccess: true,
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: MetricCard(
+                        label: 'This month',
+                        value: '-\$${monthlyExpense.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                        icon: TablerIcons.arrow_up,
+                        isSuccess: false,
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
             const SizedBox(height: 20),
 

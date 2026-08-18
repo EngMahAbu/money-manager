@@ -201,17 +201,38 @@ class AppDao extends DatabaseAccessor<AppDatabase> with _$AppDaoMixin {
         
       return transactionsQuery.watch().map((txs) {
         double balance = account.startingBalance;
+        final isCreditCard = account.type == AccountType.creditCard;
+        
         for (final tx in txs) {
-          if (tx.type == TransactionType.income) {
-            balance += tx.amount;
-          } else if (tx.type == TransactionType.expense) {
-            balance -= tx.amount;
-          } else if (tx.type == TransactionType.transfer) {
-            if (tx.accountId == accountId) {
+          if (isCreditCard) {
+            // Credit cards: track debt as positive, so expenses increase debt
+            if (tx.type == TransactionType.income) {
               balance -= tx.amount;
-            }
-            if (tx.toAccountId == accountId) {
+            } else if (tx.type == TransactionType.expense) {
               balance += tx.amount;
+            } else if (tx.type == TransactionType.transfer) {
+              if (tx.accountId == accountId) {
+                // Transfer out = paying off debt
+                balance -= tx.amount;
+              }
+              if (tx.toAccountId == accountId) {
+                // Transfer in = adding to debt
+                balance += tx.amount;
+              }
+            }
+          } else {
+            // Regular accounts
+            if (tx.type == TransactionType.income) {
+              balance += tx.amount;
+            } else if (tx.type == TransactionType.expense) {
+              balance -= tx.amount;
+            } else if (tx.type == TransactionType.transfer) {
+              if (tx.accountId == accountId) {
+                balance -= tx.amount;
+              }
+              if (tx.toAccountId == accountId) {
+                balance += tx.amount;
+              }
             }
           }
         }
@@ -228,12 +249,16 @@ class AppDao extends DatabaseAccessor<AppDatabase> with _$AppDaoMixin {
       return Rx.combineLatestList(accountBalances).map((balances) {
         double netWorth = 0;
         for (int i = 0; i < activeAccounts.length; i++) {
-          final account = activeAccounts[i];
           final balance = balances[i];
+          // Get the account to check its type
+          final account = activeAccounts[i];
+          final accountBalance = balance;
           if (account.type == AccountType.creditCard) {
-            netWorth -= balance; 
+            // Credit card balances are positive (representing debt)
+            // Subtract the debt from net worth
+            netWorth -= accountBalance;
           } else {
-            netWorth += balance;
+            netWorth += accountBalance;
           }
         }
         return netWorth;

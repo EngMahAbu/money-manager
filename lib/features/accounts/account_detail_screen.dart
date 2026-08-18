@@ -89,7 +89,7 @@ class _AccountDetailScreenState extends State<AccountDetailScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '\$${balance.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                        '\$${balance.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
                         style: AppTextStyles.netWorth,
                       ),
                     ],
@@ -102,6 +102,7 @@ class _AccountDetailScreenState extends State<AccountDetailScreen> {
             // Monthly Summary
             const Row(
               children: [
+                // TODO: populate these two views with actual data
                 Expanded(
                   child: MetricCard(
                     label: 'This month',
@@ -178,7 +179,7 @@ class _AccountDetailScreenState extends State<AccountDetailScreen> {
               icon: tx.type == TransactionType.income ? TablerIcons.briefcase : TablerIcons.shopping_cart,
               name: tx.note ?? (tx.type == TransactionType.income ? 'Income' : 'Expense'),
               timestamp: dateStr,
-              amount: tx.amount.toStringAsFixed(0),
+              amount: tx.amount.toStringAsFixed(2),
               isIncome: tx.type == TransactionType.income,
               isTransfer: tx.type == TransactionType.transfer,
               showDivider: true,

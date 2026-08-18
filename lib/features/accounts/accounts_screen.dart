@@ -82,7 +82,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                             Text(l10n.netWorth, style: AppTextStyles.label),
                             const SizedBox(height: 4),
                             Text(
-                              '\$${netWorth.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                              '\$${netWorth.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
                               style: AppTextStyles.netWorth,
                             ),
                           ],
@@ -104,7 +104,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                               leading: Icon(_getAccountIcon(account.type), size: 20, color: AppColors.textSecondary),
                               label: account.name,
                               subtitle: _getAccountTypeLabel(account.type, l10n),
-                              value: '\$${balance.toStringAsFixed(0)}',
+                              value: '\$${balance.toStringAsFixed(2)}',
                               valueColor: balance < 0 ? AppColors.dangerText : null,
                               trailing: const Icon(TablerIcons.chevron_right, size: 16, color: AppColors.textMuted),
                               onTap: () {
@@ -157,7 +157,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                                     leading: Icon(_getAccountIcon(account.type), size: 20, color: AppColors.textMuted),
                                     label: account.name,
                                     subtitle: '${_getAccountTypeLabel(account.type, l10n)} · archived',
-                                    value: '\$${balance.toStringAsFixed(0)}',
+                                    value: '\$${balance.toStringAsFixed(2)}',
                                     trailing: TextButton(
                                       onPressed: () => context.read<AccountsCubit>().restoreAccount(account.id),
                                       style: TextButton.styleFrom(

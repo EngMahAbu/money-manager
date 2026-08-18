@@ -64,7 +64,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '\$${state.netWorth.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                        '\$${state.netWorth.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
                         style: AppTextStyles.netWorth,
                       ),
                     ],
@@ -77,7 +77,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Expanded(
                         child: MetricCard(
                           label: l10n.income,
-                          value: '\$${state.monthlyIncome.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                          value: '\$${state.monthlyIncome.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
                           icon: TablerIcons.arrow_down,
                           isSuccess: true,
                         ),
@@ -86,7 +86,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Expanded(
                         child: MetricCard(
                           label: l10n.expense,
-                          value: '\$${state.monthlyExpense.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                          value: '\$${state.monthlyExpense.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
                           icon: TablerIcons.arrow_up,
                           isSuccess: false,
                         ),
@@ -139,7 +139,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               return ListRow(
                                 leading: Icon(accountIcon, size: 18, color: AppColors.textSecondary),
                                 label: account.name,
-                                value: '\$${balance.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                                value: '\$${balance.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
                                 valueColor: balance < 0 ? AppColors.dangerText : null,
                                 onTap: () {
                                   Navigator.of(context).push(
@@ -177,7 +177,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           icon: tx.type == TransactionType.income ? TablerIcons.briefcase : TablerIcons.shopping_cart,
                           name: tx.note ?? (tx.type == TransactionType.income ? 'Income' : 'Expense'),
                           timestamp: DateFormat('MMM d').format(tx.date),
-                          amount: tx.amount.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},'),
+                          amount: tx.amount.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},'),
                           isIncome: tx.type == TransactionType.income,
                           isTransfer: tx.type == TransactionType.transfer,
                           showDivider: index != state.recentTransactions.length - 1,

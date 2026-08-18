@@ -243,7 +243,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              '\$${total.toStringAsFixed(0).replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]},")}',
+                              '\$${total.toStringAsFixed(2).replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]},")}',
                               style: AppTextStyles.label.copyWith(fontSize: 11, fontWeight: FontWeight.w600),
                             ),
                             Text(l10n.total, style: AppTextStyles.muted.copyWith(fontSize: 8)),

@@ -316,7 +316,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             children: [
               Text(dateStr, style: AppTextStyles.label.copyWith(fontWeight: FontWeight.w500)),
               Text(
-                '${group.total >= 0 ? '+' : '-'}\$${group.total.abs().toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                '${group.total >= 0 ? '+' : '-'}\$${group.total.abs().toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
                 style: AppTextStyles.label.copyWith(
                   color: group.total >= 0 ? AppColors.success : AppColors.danger,
                 ),
@@ -335,7 +335,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               name: tx.note ?? (tx.type == TransactionType.income ? 'Income' : 'Expense'),
               highlightQuery: _isSearching ? _searchController.text : null,
               timestamp: accountName,
-              amount: tx.amount.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},'),
+              amount: tx.amount.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},'),
               isIncome: tx.type == TransactionType.income,
               isTransfer: tx.type == TransactionType.transfer,
               showDivider: true,

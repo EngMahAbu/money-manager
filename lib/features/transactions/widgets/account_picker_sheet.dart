@@ -88,7 +88,7 @@ class AccountPickerSheet extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                '\$${account.startingBalance.toStringAsFixed(0)}', // Rounded as in screenshot
+                                '\$${account.startingBalance.toStringAsFixed(2)}', // Rounded as in screenshot
                                 style: AppTextStyles.muted.copyWith(
                                   color: isSelected ? Colors.white.withValues(alpha: 0.7) : AppColors.textMuted,
                                 ),

@@ -2,16 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/theme/app_colors.dart';
 import '../../shared/theme/app_text_styles.dart';
 import '../../shared/theme/theme_constants.dart';
 import '../../shared/widgets/filter_chip.dart';
+import '../accounts/cubit/accounts_cubit.dart';
+import '../accounts/cubit/accounts_state.dart';
 import '../categories/cubit/categories_cubit.dart';
 import '../categories/cubit/categories_state.dart';
+import '../transactions/widgets/date_range_picker_sheet.dart';
+import '../transactions/widgets/multi_select_picker_sheet.dart';
 import 'cubit/reports_cubit.dart';
 import 'cubit/reports_state.dart';
 import '../../data/daos.dart';
+import '../../data/database.dart';
 
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
@@ -78,25 +84,90 @@ class _ReportsScreenState extends State<ReportsScreen> {
     );
   }
 
-  Widget _buildFilters(AppLocalizations l10n) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          AppFilterChip(
-            label: l10n.last6Months,
-            isActive: true,
-            onTap: () {},
-          ),
-          const SizedBox(width: 8),
-          AppFilterChip(
-            label: l10n.allAccounts,
-            isActive: false,
-            onTap: () {},
-          ),
-        ],
+  void _showDateRangePicker(ReportsState state) {
+    final startDate = state.startDate ?? DateTime.now().subtract(const Duration(days: 180));
+    final endDate = state.endDate ?? DateTime.now();
+    
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DateRangePickerSheet(
+        startDate: startDate,
+        endDate: endDate,
+        onRangeSelected: (start, end) {
+          context.read<ReportsCubit>().updateDateRange(start, end);
+        },
       ),
     );
+  }
+
+  void _showAccountMultiSelect(ReportsState state) {
+    final accountsCubit = context.read<AccountsCubit>();
+    final accounts = accountsCubit.state is AccountsLoaded 
+        ? (accountsCubit.state as AccountsLoaded).activeAccounts 
+        : <Account>[];
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => MultiSelectPickerSheet(
+        title: AppLocalizations.of(context)!.filterByAccount,
+        items: accounts.map((a) => MultiSelectItem(id: a.id, label: a.name, icon: TablerIcons.wallet)).toList(),
+        initialSelectedIds: state.accountIds ?? [],
+        onApply: (selectedIds) {
+          context.read<ReportsCubit>().updateAccountIds(selectedIds);
+          Navigator.pop(context);
+        },
+      ),
+    );
+  }
+
+  Widget _buildFilters(AppLocalizations l10n) {
+    return BlocBuilder<ReportsCubit, ReportsState>(
+      builder: (context, state) {
+        final now = DateTime.now();
+        final defaultStart = DateTime(now.year, now.month - 5, 1);
+        final defaultEnd = DateTime(now.year, now.month + 1, 0);
+        final isDefaultDateRange = state.startDate != null && state.endDate != null &&
+            DateUtils.isSameDay(state.startDate!, defaultStart) &&
+            DateUtils.isSameDay(state.endDate!, defaultEnd);
+        final hasAccountFilter = state.accountIds != null && state.accountIds!.isNotEmpty;
+        
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              AppFilterChip(
+                label: isDefaultDateRange ? l10n.last6Months : _formatDateRange(state.startDate!, state.endDate!, l10n),
+                isActive: !isDefaultDateRange,
+                onTap: () => _showDateRangePicker(state),
+              ),
+              const SizedBox(width: 8),
+              AppFilterChip(
+                label: hasAccountFilter 
+                    ? l10n.filterByAccount
+                    : l10n.allAccounts,
+                isActive: hasAccountFilter,
+                onTap: () => _showAccountMultiSelect(state),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  String _formatDateRange(DateTime start, DateTime end, AppLocalizations l10n) {
+    final now = DateTime.now();
+    final defaultStart = DateTime(now.year, now.month - 5, 1);
+    final defaultEnd = DateTime(now.year, now.month + 1, 0);
+    
+    if (DateUtils.isSameDay(start, defaultStart) && DateUtils.isSameDay(end, defaultEnd)) {
+      return l10n.last6Months;
+    }
+    return '${DateFormat('MMM d, yyyy').format(start)} - ${DateFormat('MMM d, yyyy').format(end)}';
   }
 
   Widget _buildIncomeVsExpense(ReportsState state, AppLocalizations l10n) {

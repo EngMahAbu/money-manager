@@ -10,6 +10,10 @@ class ReportsCubit extends Cubit<ReportsState> {
   final TransactionRepository _transactionRepository;
   StreamSubscription? _subscription;
 
+  DateTime? _currentStartDate;
+  DateTime? _currentEndDate;
+  List<int>? _currentAccountIds;
+
   ReportsCubit(this._transactionRepository) : super(const ReportsState(isLoading: true));
 
   void loadReports({
@@ -17,7 +21,16 @@ class ReportsCubit extends Cubit<ReportsState> {
     required DateTime endDate,
     List<int>? accountIds,
   }) {
-    emit(state.copyWith(isLoading: true));
+    _currentStartDate = startDate;
+    _currentEndDate = endDate;
+    _currentAccountIds = accountIds;
+    
+    emit(state.copyWith(
+      isLoading: true,
+      startDate: startDate,
+      endDate: endDate,
+      accountIds: accountIds,
+    ));
     _subscription?.cancel();
 
     _subscription = Rx.combineLatest6(
@@ -39,11 +52,30 @@ class ReportsCubit extends Cubit<ReportsState> {
           monthlyIncomeSeries: incomeSeries,
           monthlyExpenseSeries: expenseSeries,
           isLoading: false,
+          startDate: startDate,
+          endDate: endDate,
+          accountIds: accountIds,
         );
       },
     ).listen(
       (state) => emit(state),
       onError: (error) => emit(state.copyWith(error: error.toString(), isLoading: false)),
+    );
+  }
+
+  void updateDateRange(DateTime startDate, DateTime endDate) {
+    loadReports(
+      startDate: startDate,
+      endDate: endDate,
+      accountIds: _currentAccountIds,
+    );
+  }
+
+  void updateAccountIds(List<int> accountIds) {
+    loadReports(
+      startDate: _currentStartDate ?? DateTime.now().subtract(const Duration(days: 180)),
+      endDate: _currentEndDate ?? DateTime.now(),
+      accountIds: accountIds.isEmpty ? null : accountIds,
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import '../../../data/daos.dart';
+import '../../../data/database.dart';
 
 class ReportsState extends Equatable {
   final Map<int, double> categoryBreakdown;
@@ -11,6 +12,9 @@ class ReportsState extends Equatable {
   final double totalExpense;
   final bool isLoading;
   final String? error;
+  final DateTime? startDate;
+  final DateTime? endDate;
+  final List<int>? accountIds;
 
   const ReportsState({
     this.categoryBreakdown = const {},
@@ -22,6 +26,9 @@ class ReportsState extends Equatable {
     this.totalExpense = 0,
     this.isLoading = false,
     this.error,
+    this.startDate,
+    this.endDate,
+    this.accountIds,
   });
 
   ReportsState copyWith({
@@ -34,6 +41,9 @@ class ReportsState extends Equatable {
     double? totalExpense,
     bool? isLoading,
     String? error,
+    DateTime? startDate,
+    DateTime? endDate,
+    List<int>? accountIds,
   }) {
     return ReportsState(
       categoryBreakdown: categoryBreakdown ?? this.categoryBreakdown,
@@ -45,6 +55,9 @@ class ReportsState extends Equatable {
       totalExpense: totalExpense ?? this.totalExpense,
       isLoading: isLoading ?? this.isLoading,
       error: error,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
+      accountIds: accountIds ?? this.accountIds,
     );
   }
 
@@ -59,5 +72,8 @@ class ReportsState extends Equatable {
         totalExpense,
         isLoading,
         error,
+        startDate,
+        endDate,
+        accountIds,
       ];
 }

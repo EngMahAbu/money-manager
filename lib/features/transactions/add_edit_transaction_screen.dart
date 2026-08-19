@@ -52,6 +52,32 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
       _amountString = widget.transaction!.amount.toStringAsFixed(2);
       _selectedDate = widget.transaction!.date;
       _note = widget.transaction!.note;
+      
+      // Get accounts and categories from cubits
+      final accountsState = context.read<AccountsCubit>().state;
+      final categoriesState = context.read<CategoriesCubit>().state;
+      
+      if (accountsState is AccountsLoaded) {
+        _selectedAccount = accountsState.activeAccounts
+            .where((a) => a.id == widget.transaction!.accountId)
+            .firstOrNull;
+        
+        if (widget.transaction!.toAccountId != null) {
+          _selectedToAccount = accountsState.activeAccounts
+              .where((a) => a.id == widget.transaction!.toAccountId)
+              .firstOrNull;
+        }
+      }
+      
+      if (categoriesState is CategoriesLoaded && widget.transaction!.categoryId != null) {
+        final allCategories = [
+          ...categoriesState.incomeCategories,
+          ...categoriesState.expenseCategories,
+        ];
+        _selectedCategory = allCategories
+            .where((c) => c.id == widget.transaction!.categoryId)
+            .firstOrNull;
+      }
     }
   }
 
@@ -264,7 +290,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
           icon: const Icon(TablerIcons.x),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text(l10n.newTransaction),
+        title: Text(widget.transaction == null ? l10n.newTransaction : l10n.editTransaction),
         centerTitle: true,
         actions: [
           IconButton(

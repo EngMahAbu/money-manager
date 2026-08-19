@@ -334,4 +334,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorReceiptLimit => 'Maximum 5 receipts allowed';
+
+  @override
+  String get note => 'Note';
+
+  @override
+  String get noNoteAdded => 'No note added';
+
+  @override
+  String get noReceiptsAttached => 'No receipts attached';
+
+  @override
+  String get deleteTransaction => 'Delete Transaction';
+
+  @override
+  String get deleteTransactionConfirmation =>
+      'Are you sure you want to delete this transaction? This action cannot be undone.';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get uncategorized => 'Uncategorized';
+
+  @override
+  String get unknown => 'Unknown';
+
+  @override
+  String daysAgo(Object count) {
+    return '$count days ago';
+  }
 }

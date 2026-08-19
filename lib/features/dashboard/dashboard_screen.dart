@@ -16,6 +16,8 @@ import '../accounts/accounts_screen.dart';
 import '../accounts/account_detail_screen.dart';
 import '../categories/cubit/categories_cubit.dart';
 import '../categories/cubit/categories_state.dart';
+import '../transactions/transaction_detail_screen.dart';
+import '../transactions/transactions_screen.dart';
 import '../../repositories/account_repository.dart';
 import 'cubit/dashboard_cubit.dart';
 import 'cubit/dashboard_state.dart';
@@ -163,8 +165,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   SectionHeader(
                     title: l10n.recentTransactions,
                     onActionPressed: () {
-                      // Navigate to Transactions tab - handled by HomeScreen
-                      // For now, we don't have an easy way to switch tabs from here without passing a callback
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const TransactionsScreen(),
+                        ),
+                      );
                     },
                   ),
                   const SizedBox(height: 8),
@@ -218,6 +223,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               barColor: barColor,
                               avatarBackgroundColor: avatarBgColor,
                               avatarIconColor: avatarIconColor,
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => TransactionDetailScreen(transaction: tx),
+                                  ),
+                                );
+                              },
                             );
                           }),
                         );

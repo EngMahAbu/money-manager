@@ -717,6 +717,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Maximum 5 receipts allowed'**
   String get errorReceiptLimit;
+
+  /// No description provided for @note.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get note;
+
+  /// No description provided for @noNoteAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'No note added'**
+  String get noNoteAdded;
+
+  /// No description provided for @noReceiptsAttached.
+  ///
+  /// In en, this message translates to:
+  /// **'No receipts attached'**
+  String get noReceiptsAttached;
+
+  /// No description provided for @deleteTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Transaction'**
+  String get deleteTransaction;
+
+  /// No description provided for @deleteTransactionConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this transaction? This action cannot be undone.'**
+  String get deleteTransactionConfirmation;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @uncategorized.
+  ///
+  /// In en, this message translates to:
+  /// **'Uncategorized'**
+  String get uncategorized;
+
+  /// No description provided for @unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get unknown;
+
+  /// No description provided for @daysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days ago'**
+  String daysAgo(Object count);
 }
 
 class _AppLocalizationsDelegate

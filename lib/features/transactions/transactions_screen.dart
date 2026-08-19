@@ -16,6 +16,7 @@ import '../categories/cubit/categories_cubit.dart';
 import '../categories/cubit/categories_state.dart';
 import 'cubit/transactions_cubit.dart';
 import 'cubit/transactions_state.dart';
+import 'transaction_detail_screen.dart';
 import 'widgets/combined_filter_sheet.dart';
 import 'widgets/date_range_picker_sheet.dart';
 import 'widgets/multi_select_picker_sheet.dart';
@@ -367,10 +368,17 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               amount: tx.amount.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},'),
               isIncome: isIncome,
               isTransfer: isTransfer,
-              showDivider: true,
+              showDivider: index < group.transactions.length - 1,
               barColor: barColor,
               avatarBackgroundColor: avatarBgColor,
               avatarIconColor: avatarIconColor,
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => TransactionDetailScreen(transaction: tx),
+                  ),
+                );
+              },
             );
           }),
         ),

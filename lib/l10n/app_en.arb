@@ -110,5 +110,16 @@
   "errorTransferNoCategory": "Transfers cannot have a category",
   "errorTransferSameAccount": "Cannot transfer to the same account",
   "errorNoteLimit": "Note cannot exceed 150 characters",
-  "errorReceiptLimit": "Maximum 5 receipts allowed"
+  "errorReceiptLimit": "Maximum 5 receipts allowed",
+
+  "note": "Note",
+  "noNoteAdded": "No note added",
+  "noReceiptsAttached": "No receipts attached",
+  "deleteTransaction": "Delete Transaction",
+  "deleteTransactionConfirmation": "Are you sure you want to delete this transaction? This action cannot be undone.",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "uncategorized": "Uncategorized",
+  "unknown": "Unknown",
+  "daysAgo": "{count} days ago"
 }

@@ -16,6 +16,7 @@ import '../categories/cubit/categories_cubit.dart';
 import '../categories/cubit/categories_state.dart';
 import '../transactions/cubit/transactions_cubit.dart';
 import '../transactions/cubit/transactions_state.dart';
+import '../transactions/transaction_detail_screen.dart';
 import '../transactions/transactions_screen.dart';
 import 'add_edit_account_screen.dart';
 import '../../repositories/account_repository.dart';
@@ -259,10 +260,17 @@ class _AccountDetailScreenState extends State<AccountDetailScreen> {
               amount: tx.amount.toStringAsFixed(2),
               isIncome: isIncome,
               isTransfer: isTransfer,
-              showDivider: true,
+              showDivider: index < group.transactions.length - 1,
               barColor: barColor,
               avatarBackgroundColor: avatarBgColor,
               avatarIconColor: avatarIconColor,
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => TransactionDetailScreen(transaction: tx),
+                  ),
+                );
+              },
             );
           }),
         ),

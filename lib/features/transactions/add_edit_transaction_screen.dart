@@ -258,6 +258,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.surfacePage,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(TablerIcons.x),

@@ -112,9 +112,17 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
       builder: (context) => BlocBuilder<AccountsCubit, AccountsState>(
         builder: (context, state) {
           final accounts = state is AccountsLoaded ? state.activeAccounts : <Account>[];
+          // Determine which account to disable:
+          // - If picking "to" account, disable the "from" account
+          // - If picking "from" account, disable the "to" account
+          final disabledAccountId = isToAccount 
+              ? _selectedAccount?.id 
+              : _selectedToAccount?.id;
+          
           return AccountPickerSheet(
             accounts: accounts,
             selectedAccountId: isToAccount ? _selectedToAccount?.id : _selectedAccount?.id,
+            disabledAccountId: disabledAccountId,
             onSelected: (account) {
               setState(() {
                 if (isToAccount) {

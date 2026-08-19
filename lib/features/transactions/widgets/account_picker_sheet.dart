@@ -13,6 +13,7 @@ import '../../../repositories/account_repository.dart';
 class AccountPickerSheet extends StatefulWidget {
   final List<Account> accounts;
   final int? selectedAccountId;
+  final int? disabledAccountId;
   final Function(Account) onSelected;
   final VoidCallback onAddAccount;
 
@@ -20,6 +21,7 @@ class AccountPickerSheet extends StatefulWidget {
     super.key,
     required this.accounts,
     this.selectedAccountId,
+    this.disabledAccountId,
     required this.onSelected,
     required this.onAddAccount,
   });
@@ -69,6 +71,8 @@ class _AccountPickerSheetState extends State<AccountPickerSheet> {
                       break;
                   }
         
+                  final isDisabled = widget.disabledAccountId != null && account.id == widget.disabledAccountId;
+                  
                   return StreamBuilder<double>(
                     stream: accountRepository.watchAccountBalance(account.id),
                     initialData: account.startingBalance,
@@ -76,45 +80,51 @@ class _AccountPickerSheetState extends State<AccountPickerSheet> {
                       final currentBalance = snapshot.data ?? account.startingBalance;
                       final isSelected = account.id == widget.selectedAccountId;
                       
-                      return GestureDetector(
-                        onTap: () => widget.onSelected(account),
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: isSelected ? AppColors.accent : AppColors.surfaceInner,
-                            borderRadius: BorderRadius.circular(ThemeConstants.innerRadius),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                accountIcon, 
-                                size: 20, 
-                                color: isSelected ? Colors.white : AppColors.textSecondary,
+                      return Opacity(
+                        opacity: isDisabled ? 0.5 : 1.0,
+                        child: IgnorePointer(
+                          ignoring: isDisabled,
+                          child: GestureDetector(
+                            onTap: isDisabled ? null : () => widget.onSelected(account),
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: isSelected ? AppColors.accent : AppColors.surfaceInner,
+                                borderRadius: BorderRadius.circular(ThemeConstants.innerRadius),
                               ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      account.name,
-                                      style: AppTextStyles.body.copyWith(
-                                        color: isSelected ? Colors.white : AppColors.textPrimary,
-                                        fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
-                                      ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    accountIcon, 
+                                    size: 20, 
+                                    color: isSelected ? Colors.white : AppColors.textSecondary,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          account.name,
+                                          style: AppTextStyles.body.copyWith(
+                                            color: isSelected ? Colors.white : AppColors.textPrimary,
+                                            fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+                                          ),
+                                        ),
+                                        Text(
+                                          '\$${currentBalance.toStringAsFixed(2)}',
+                                          style: AppTextStyles.muted.copyWith(
+                                            color: isSelected ? Colors.white.withValues(alpha: 0.7) : AppColors.textMuted,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    Text(
-                                      '\$${currentBalance.toStringAsFixed(2)}',
-                                      style: AppTextStyles.muted.copyWith(
-                                        color: isSelected ? Colors.white.withValues(alpha: 0.7) : AppColors.textMuted,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                  if (isSelected)
+                                    const Icon(TablerIcons.check, color: Colors.white, size: 20),
+                                ],
                               ),
-                              if (isSelected)
-                                const Icon(TablerIcons.check, color: Colors.white, size: 20),
-                            ],
+                            ),
                           ),
                         ),
                       );

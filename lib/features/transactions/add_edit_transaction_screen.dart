@@ -8,6 +8,7 @@ import '../../l10n/app_localizations.dart';
 import '../../shared/theme/app_colors.dart';
 import '../../shared/theme/app_text_styles.dart';
 import '../../shared/theme/theme_constants.dart';
+import '../../shared/utils/expression_evaluator.dart';
 import '../../shared/widgets/field_row.dart';
 import '../accounts/cubit/accounts_cubit.dart';
 import '../accounts/cubit/accounts_state.dart';
@@ -50,25 +51,27 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
     _selectedType = widget.transaction?.type ?? TransactionType.expense;
     if (widget.transaction != null) {
       _amountString = widget.transaction!.amount.toStringAsFixed(2);
+      _expression = _amountString;
+      _lastValidAmount = _amountString;
       _selectedDate = widget.transaction!.date;
       _note = widget.transaction!.note;
-      
+
       // Get accounts and categories from cubits
       final accountsState = context.read<AccountsCubit>().state;
       final categoriesState = context.read<CategoriesCubit>().state;
-      
+
       if (accountsState is AccountsLoaded) {
         _selectedAccount = accountsState.activeAccounts
             .where((a) => a.id == widget.transaction!.accountId)
             .firstOrNull;
-        
+
         if (widget.transaction!.toAccountId != null) {
           _selectedToAccount = accountsState.activeAccounts
               .where((a) => a.id == widget.transaction!.toAccountId)
               .firstOrNull;
         }
       }
-      
+
       if (categoriesState is CategoriesLoaded && widget.transaction!.categoryId != null) {
         final allCategories = [
           ...categoriesState.incomeCategories,
@@ -87,13 +90,13 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
       if (_selectedType == TransactionType.transfer && _selectedToAccount != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(l10n.clearToAccountMessage)),
-        );
+          );
         return;
       }
       if ((_selectedType == TransactionType.income || _selectedType == TransactionType.expense) && _selectedCategory != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(l10n.clearCategoryMessage)),
-        );
+          );
         return;
       }
     }
@@ -102,32 +105,138 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
     });
   }
 
+  void _toggleCalculator() {
+    setState(() {
+      _isCalculatorExpanded = !_isCalculatorExpanded;
+      // When exiting calculator mode, clear the expression
+      // but keep the final amount
+      if (!_isCalculatorExpanded) {
+        _expression = '';
+      } else if (_expression.isEmpty) {
+        // Entering calculator mode - initialize expression with current amount
+        _expression = _amountString;
+      }
+    });
+  }
+
   void _onKeyPressed(String key) {
     setState(() {
-      if (_amountString == '0' && key != '.') {
-        _amountString = key;
+      // Handle different key types
+      if (key == '.') {
+        // Allow one decimal point in each number of the expression.
+        var lastOperatorIndex = -1;
+        for (final operator in '+-×÷'.split('')) {
+          lastOperatorIndex =
+              lastOperatorIndex < _expression.lastIndexOf(operator)
+              ? _expression.lastIndexOf(operator)
+              : lastOperatorIndex;
+        }
+        final currentNumber = _expression.substring(lastOperatorIndex + 1);
+        if (currentNumber.contains('.')) return;
+        // If expression is empty or ends with operator, start with "0."
+        if (_expression.isEmpty ||
+            _expression.endsWith('+') ||
+            _expression.endsWith('-') ||
+            _expression.endsWith('×') ||
+            _expression.endsWith('÷')) {
+          _expression += '0';
+        }
+        _expression += key;
       } else {
-        if (key == '.' && _amountString.contains('.')) return;
-        _amountString += key;
+        // It's a digit
+        // If expression is empty or ends with operator (except -), start fresh
+        if (_expression.isEmpty ||
+            _expression.endsWith('+') ||
+            _expression.endsWith('×') ||
+            _expression.endsWith('÷')) {
+          _expression += key;
+        } else if (_expression.endsWith('-') && _expression.length > 1) {
+          // Handle negative numbers: if we have "-" and it's not at position 0, just append
+          // But if it's at position 0 (like "-5"), we need to check
+          final prevChar = _expression[_expression.length - 2];
+          if (prevChar == '+' ||
+              prevChar == '-' ||
+              prevChar == '×' ||
+              prevChar == '÷') {
+            // The "-" is an operator, start the number
+            _expression += key;
+          } else {
+            // The "-" is part of a negative number, append to it
+            _expression += key;
+          }
+        } else if (_expression == '0') {
+          // Replace the 0
+          _expression = key;
+        } else {
+          // Append to the current number
+          _expression += key;
+        }
       }
+      _evaluateAndUpdateAmount();
     });
   }
 
   void _onDeletePressed() {
     setState(() {
-      if (_amountString.length > 1) {
-        _amountString = _amountString.substring(0, _amountString.length - 1);
-      } else {
-        _amountString = '0';
+      if (_expression.isNotEmpty) {
+        _expression = _expression.substring(0, _expression.length - 1);
       }
+      if (_expression.isEmpty) {
+        _expression = '0';
+      }
+      _evaluateAndUpdateAmount();
     });
   }
 
   void _onOperatorPressed(String op) {
     setState(() {
-      _expression += ' $_amountString $op';
-      _amountString = '0';
+      // If expression is empty or just "0", don't add operator
+      if (_expression.isEmpty || _expression == '0') {
+        return;
+      }
+
+      // If expression already ends with an operator, replace it
+      if (_expression.endsWith('+') ||
+          _expression.endsWith('-') ||
+          _expression.endsWith('×') ||
+          _expression.endsWith('÷')) {
+        // Replace the last character with the new operator
+        _expression = _expression.substring(0, _expression.length - 1) + op;
+      } else {
+        // Add the operator
+        _expression += op;
+      }
+      _evaluateAndUpdateAmount();
     });
+  }
+
+  String _lastValidAmount = '0';
+
+  void _evaluateAndUpdateAmount() {
+    // Try to evaluate the expression
+    try {
+      // Only evaluate if the expression is valid (doesn't end with operator)
+      if (_expression.isNotEmpty &&
+          !_expression.endsWith('+') &&
+          !_expression.endsWith('-') &&
+          !_expression.endsWith('×') &&
+          !_expression.endsWith('÷')) {
+        final result = ExpressionEvaluator.evaluate(_expression);
+        _amountString = result.toStringAsFixed(2);
+        _lastValidAmount = _amountString;
+        // Remove trailing .00
+        if (_amountString.endsWith('.00')) {
+          _amountString = _amountString.substring(0, _amountString.length - 3);
+        }
+      } else {
+        // Incomplete expression - show the last valid amount
+        // "a trailing operator with nothing after it is simply ignored"
+        _amountString = _lastValidAmount;
+      }
+    } catch (e) {
+      // If evaluation fails, show the last valid amount
+      _amountString = _lastValidAmount;
+    }
   }
 
   void _showAccountPicker(bool isToAccount) {
@@ -141,10 +250,10 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
           // Determine which account to disable:
           // - If picking "to" account, disable the "from" account
           // - If picking "from" account, disable the "to" account
-          final disabledAccountId = isToAccount 
-              ? _selectedAccount?.id 
+          final disabledAccountId = isToAccount
+              ? _selectedAccount?.id
               : _selectedToAccount?.id;
-          
+
           return AccountPickerSheet(
             accounts: accounts,
             selectedAccountId: isToAccount ? _selectedToAccount?.id : _selectedAccount?.id,
@@ -178,8 +287,8 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
       backgroundColor: Colors.transparent,
       builder: (context) => BlocBuilder<CategoriesCubit, CategoriesState>(
         builder: (context, state) {
-          final filtered = state is CategoriesLoaded 
-              ? (_selectedType == TransactionType.income ? state.incomeCategories : state.expenseCategories)
+          final filtered = state is CategoriesLoaded
+              ? (_selectedType == TransactionType.income ? state.incomeCategories : state.expenseCategories) 
               : <Category>[];
 
           return CategoryPickerSheet(
@@ -330,7 +439,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 2),
                           child: Text(
-                            _expression,
+                            ExpressionEvaluator.formatExpression(_expression),
                             style: AppTextStyles.muted.copyWith(fontSize: 12),
                           ),
                         ),
@@ -346,7 +455,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                           ),
                           const SizedBox(width: 8),
                           GestureDetector(
-                            onTap: () => setState(() => _isCalculatorExpanded = !_isCalculatorExpanded),
+                            onTap: () => _toggleCalculator(),
                             child: Icon(
                               TablerIcons.calculator,
                               size: 18,
@@ -365,6 +474,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                         icon: TablerIcons.wallet,
                         label: _selectedType == TransactionType.transfer ? l10n.from : l10n.account,
                         value: _selectedAccount?.name ?? 'Select',
+                        padding: _isCalculatorExpanded ? 10 : 12,
                         onTap: () => _showAccountPicker(false),
                       ),
                       const SizedBox(height: 4),
@@ -374,6 +484,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                           label: l10n.to,
                           value: _selectedToAccount?.name ?? 'Select',
                           isAccent: true,
+                          padding: _isCalculatorExpanded ? 10 : 12,
                           onTap: () => _showAccountPicker(true),
                         )
                       else
@@ -381,6 +492,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                           icon: TablerIcons.category,
                           label: l10n.category,
                           value: _selectedCategory?.name ?? 'Select',
+                          padding: _isCalculatorExpanded ? 10 : 12,
                           onTap: _showCategoryPicker,
                         ),
                       const SizedBox(height: 4),
@@ -392,6 +504,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                             : DateUtils.isSameDay(_selectedDate, DateTime.now().subtract(const Duration(days: 1)))
                                 ? l10n.yesterday
                                 : DateFormat('MMM d, yyyy').format(_selectedDate),
+                        padding: _isCalculatorExpanded ? 10 : 12,
                         onTap: _showDatePicker,
                       ),
                       const SizedBox(height: 4),
@@ -423,7 +536,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
     final isSelected = _selectedType == type;
     Color? bgColor;
     Color? textColor;
-    
+
     if (isSelected) {
       if (type == TransactionType.income) {
         bgColor = AppColors.successContainer;

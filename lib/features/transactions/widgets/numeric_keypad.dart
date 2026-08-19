@@ -61,7 +61,7 @@ class NumericKeypad extends StatelessWidget {
               _buildKey('9'),
               if (isCalculatorExpanded) ...[
                 const SizedBox(width: 8),
-                _buildOperatorKey('−'),
+                _buildOperatorKey('−', '-'),
               ],
             ],
           ),
@@ -121,10 +121,10 @@ class NumericKeypad extends StatelessWidget {
     );
   }
 
-  Widget _buildOperatorKey(String op) {
+  Widget _buildOperatorKey(String label, [String? value]) {
     return Expanded(
       child: GestureDetector(
-        onTap: () => onOperatorPressed(op),
+        onTap: () => onOperatorPressed(value ?? label),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
@@ -133,7 +133,7 @@ class NumericKeypad extends StatelessWidget {
           ),
           alignment: Alignment.center,
           child: Text(
-            op,
+            label,
             style: const TextStyle(fontSize: 18, color: AppColors.accentText),
           ),
         ),

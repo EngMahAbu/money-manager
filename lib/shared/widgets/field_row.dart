@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 import '../theme/theme_constants.dart';
@@ -8,6 +9,7 @@ class FieldRow extends StatelessWidget {
   final String label;
   final String? value;
   final bool isAccent;
+  final double padding;
   final VoidCallback? onTap;
 
   const FieldRow({
@@ -16,6 +18,7 @@ class FieldRow extends StatelessWidget {
     required this.label,
     this.value,
     this.isAccent = false,
+    this.padding = 12,
     this.onTap,
   });
 
@@ -29,7 +32,7 @@ class FieldRow extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(padding),
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(ThemeConstants.innerRadius),
@@ -47,7 +50,7 @@ class FieldRow extends StatelessWidget {
               ),
             if (onTap != null) ...[
               const SizedBox(width: 4),
-              Icon(Icons.chevron_right, size: 16, color: iconColor),
+              Icon(TablerIcons.chevron_right, size: 16, color: iconColor),
             ],
           ],
         ),

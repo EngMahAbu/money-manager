@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import '../../../data/database.dart';
 import '../../../shared/theme/app_colors.dart';
@@ -7,8 +8,9 @@ import '../../../shared/theme/theme_constants.dart';
 import '../../../shared/widgets/bottom_sheet_header.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../../repositories/account_repository.dart';
 
-class AccountPickerSheet extends StatelessWidget {
+class AccountPickerSheet extends StatefulWidget {
   final List<Account> accounts;
   final int? selectedAccountId;
   final Function(Account) onSelected;
@@ -23,8 +25,14 @@ class AccountPickerSheet extends StatelessWidget {
   });
 
   @override
+  State<AccountPickerSheet> createState() => _AccountPickerSheetState();
+}
+
+class _AccountPickerSheetState extends State<AccountPickerSheet> {
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final accountRepository = context.read<AccountRepository>();
 
     return Container(
       decoration: const BoxDecoration(
@@ -40,12 +48,11 @@ class AccountPickerSheet extends StatelessWidget {
             Flexible(
               child: ListView.separated(
                 shrinkWrap: true,
-                itemCount: accounts.length,
+                itemCount: widget.accounts.length,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                separatorBuilder: (_, _) => const SizedBox(height: 8),
                 itemBuilder: (context, index) {
-                  final account = accounts[index];
-                  final isSelected = account.id == selectedAccountId;
+                  final account = widget.accounts[index];
                   
                   // Determine icon based on type from design doc
                   IconData accountIcon;
@@ -62,47 +69,56 @@ class AccountPickerSheet extends StatelessWidget {
                       break;
                   }
         
-                  return GestureDetector(
-                    onTap: () => onSelected(account),
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: isSelected ? AppColors.accent : AppColors.surfaceInner,
-                        borderRadius: BorderRadius.circular(ThemeConstants.innerRadius),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            accountIcon, 
-                            size: 20, 
-                            color: isSelected ? Colors.white : AppColors.textSecondary,
+                  return StreamBuilder<double>(
+                    stream: accountRepository.watchAccountBalance(account.id),
+                    initialData: account.startingBalance,
+                    builder: (context, snapshot) {
+                      final currentBalance = snapshot.data ?? account.startingBalance;
+                      final isSelected = account.id == widget.selectedAccountId;
+                      
+                      return GestureDetector(
+                        onTap: () => widget.onSelected(account),
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: isSelected ? AppColors.accent : AppColors.surfaceInner,
+                            borderRadius: BorderRadius.circular(ThemeConstants.innerRadius),
                           ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  account.name,
-                                  style: AppTextStyles.body.copyWith(
-                                    color: isSelected ? Colors.white : AppColors.textPrimary,
-                                    fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
-                                  ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                accountIcon, 
+                                size: 20, 
+                                color: isSelected ? Colors.white : AppColors.textSecondary,
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      account.name,
+                                      style: AppTextStyles.body.copyWith(
+                                        color: isSelected ? Colors.white : AppColors.textPrimary,
+                                        fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+                                      ),
+                                    ),
+                                    Text(
+                                      '\$${currentBalance.toStringAsFixed(2)}',
+                                      style: AppTextStyles.muted.copyWith(
+                                        color: isSelected ? Colors.white.withValues(alpha: 0.7) : AppColors.textMuted,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Text(
-                                  '\$${account.startingBalance.toStringAsFixed(2)}', // Rounded as in screenshot
-                                  style: AppTextStyles.muted.copyWith(
-                                    color: isSelected ? Colors.white.withValues(alpha: 0.7) : AppColors.textMuted,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                              if (isSelected)
+                                const Icon(TablerIcons.check, color: Colors.white, size: 20),
+                            ],
                           ),
-                          if (isSelected)
-                            const Icon(TablerIcons.check, color: Colors.white, size: 20),
-                        ],
-                      ),
-                    ),
+                        ),
+                      );
+                    },
                   );
                 },
               ),
@@ -111,7 +127,7 @@ class AccountPickerSheet extends StatelessWidget {
             ListTile(
               leading: const Icon(TablerIcons.plus, color: AppColors.accent),
               title: Text(l10n.addAccountAction, style: const TextStyle(color: AppColors.accent)),
-              onTap: onAddAccount,
+              onTap: widget.onAddAccount,
             ),
             const SizedBox(height: 16),
           ],

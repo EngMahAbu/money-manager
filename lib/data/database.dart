@@ -121,7 +121,7 @@ class AppDatabase extends _$AppDatabase {
 
           final incomeIcons = [
             'briefcase',
-            'laptop',
+            'device-laptop',
             'gift',
             'trending-up',
             'dots',

@@ -6,12 +6,16 @@ import '../../l10n/app_localizations.dart';
 import '../../shared/theme/app_colors.dart';
 import '../../shared/theme/app_text_styles.dart';
 import '../../shared/theme/theme_constants.dart';
+import '../../shared/utils/category_colors.dart';
+import '../../shared/utils/icon_mapper.dart';
 import '../../shared/widgets/metric_card.dart';
 import '../../shared/widgets/list_row.dart';
 import '../../shared/widgets/transaction_row.dart';
 import '../../shared/widgets/section_header.dart';
 import '../accounts/accounts_screen.dart';
 import '../accounts/account_detail_screen.dart';
+import '../categories/cubit/categories_cubit.dart';
+import '../categories/cubit/categories_state.dart';
 import '../../repositories/account_repository.dart';
 import 'cubit/dashboard_cubit.dart';
 import 'cubit/dashboard_state.dart';
@@ -170,19 +174,54 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       borderRadius: BorderRadius.circular(ThemeConstants.cardRadius),
                       border: Border.all(color: AppColors.borderDefault, width: 0.5),
                     ),
-                    child: Column(
-                      children: List.generate(state.recentTransactions.length, (index) {
-                        final tx = state.recentTransactions[index];
-                        return TransactionRow(
-                          icon: tx.type == TransactionType.income ? TablerIcons.briefcase : TablerIcons.shopping_cart,
-                          name: tx.note ?? (tx.type == TransactionType.income ? 'Income' : 'Expense'),
-                          timestamp: DateFormat('MMM d').format(tx.date),
-                          amount: tx.amount.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},'),
-                          isIncome: tx.type == TransactionType.income,
-                          isTransfer: tx.type == TransactionType.transfer,
-                          showDivider: index != state.recentTransactions.length - 1,
+                    child: BlocBuilder<CategoriesCubit, CategoriesState>(
+                      builder: (context, categoriesState) {
+                        final allCategories = categoriesState is CategoriesLoaded 
+                            ? [...categoriesState.incomeCategories, ...categoriesState.expenseCategories] 
+                            : <Category>[];
+                        
+                        return Column(
+                          children: List.generate(state.recentTransactions.length, (index) {
+                            final tx = state.recentTransactions[index];
+                            
+                            // Get category information
+                            final category = allCategories.where((c) => c.id == tx.categoryId).firstOrNull;
+                            final categoryName = category?.name ?? tx.note ?? (tx.type == TransactionType.transfer ? 'Transfer' : (tx.type == TransactionType.income ? 'Income' : 'Expense'));
+                            final categoryIcon = getTablerIcon(category?.icon);
+                            final isTransfer = tx.type == TransactionType.transfer;
+                            final isIncome = tx.type == TransactionType.income;
+                            
+                            // Get ramp color for category
+                            final rampColor = getCategoryRampColor(tx.categoryId, allCategories);
+                            
+                            // For transfers without a category, use accent color
+                            final avatarBgColor = isTransfer && category == null 
+                                ? AppColors.accentContainer 
+                                : rampColor.container;
+                            final avatarIconColor = isTransfer && category == null 
+                                ? AppColors.accentText 
+                                : rampColor.text;
+                            
+                            // Bar color based on transaction type
+                            final barColor = isTransfer 
+                                ? AppColors.accent 
+                                : (isIncome ? AppColors.success : AppColors.danger);
+
+                            return TransactionRow(
+                              icon: categoryIcon,
+                              name: categoryName,
+                              timestamp: DateFormat('MMM d').format(tx.date),
+                              amount: tx.amount.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},'),
+                              isIncome: isIncome,
+                              isTransfer: isTransfer,
+                              showDivider: index != state.recentTransactions.length - 1,
+                              barColor: barColor,
+                              avatarBackgroundColor: avatarBgColor,
+                              avatarIconColor: avatarIconColor,
+                            );
+                          }),
                         );
-                      }),
+                      },
                     ),
                   ),
                 ],

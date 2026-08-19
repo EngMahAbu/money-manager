@@ -11,6 +11,9 @@ class TransactionRow extends StatelessWidget {
   final bool isIncome;
   final bool isTransfer;
   final bool showDivider;
+  final Color? barColor;
+  final Color? avatarBackgroundColor;
+  final Color? avatarIconColor;
 
   const TransactionRow({
     super.key,
@@ -22,20 +25,32 @@ class TransactionRow extends StatelessWidget {
     this.isIncome = false,
     this.isTransfer = false,
     this.showDivider = true,
+    this.barColor,
+    this.avatarBackgroundColor,
+    this.avatarIconColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    final avatarBgColor = isTransfer 
-        ? AppColors.accentContainer 
-        : (isIncome ? AppColors.successContainer : AppColors.dangerContainer);
-    final avatarIconColor = isTransfer 
-        ? AppColors.accentText 
-        : (isIncome ? AppColors.successText : AppColors.dangerText);
+    // Use custom colors if provided, otherwise fall back to type-based colors
+    final effectiveAvatarBgColor = avatarBackgroundColor 
+        ?? (isTransfer 
+            ? AppColors.accentContainer 
+            : (isIncome ? AppColors.successContainer : AppColors.dangerContainer));
+    final effectiveAvatarIconColor = avatarIconColor 
+        ?? (isTransfer 
+            ? AppColors.accentText 
+            : (isIncome ? AppColors.successText : AppColors.dangerText));
     final amountColor = isTransfer 
         ? AppColors.textPrimary 
         : (isIncome ? AppColors.success : AppColors.danger);
     final prefix = isTransfer ? '' : (isIncome ? '+' : '-');
+    
+    // Determine bar color based on type
+    final effectiveBarColor = barColor 
+        ?? (isTransfer 
+            ? AppColors.accent 
+            : (isIncome ? AppColors.success : AppColors.danger));
 
     return Column(
       children: [
@@ -43,14 +58,25 @@ class TransactionRow extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
           child: Row(
             children: [
+              // Vertical colored bar representing transaction type
+              Container(
+                width: 3,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: effectiveBarColor,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 9),
+              // Category icon avatar with ramp color
               Container(
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: avatarBgColor,
+                  color: effectiveAvatarBgColor,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, size: 18, color: avatarIconColor),
+                child: Icon(icon, size: 18, color: effectiveAvatarIconColor),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -74,7 +100,7 @@ class TransactionRow extends StatelessWidget {
           ),
         ),
         if (showDivider)
-          const Divider(indent: 56, endIndent: 12),
+          const Divider(indent: 68, endIndent: 12),
       ],
     );
   }

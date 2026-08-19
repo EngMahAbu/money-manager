@@ -80,27 +80,39 @@ class _ComponentGalleryScreenState extends State<ComponentGalleryScreen> {
             Card(
               child: Column(
                 children: [
+                  // Expense transaction with category (Groceries)
                   TransactionRow(
                     icon: TablerIcons.shopping_cart,
                     name: 'Groceries',
                     timestamp: 'Today, 2:30 PM',
                     amount: '85.20',
                     isIncome: false,
+                    barColor: AppColors.danger,
+                    avatarBackgroundColor: AppColors.chartRamp[0].container, // Purple
+                    avatarIconColor: AppColors.chartRamp[0].text,
                   ),
+                  // Income transaction with category (Salary)
                   TransactionRow(
                     icon: TablerIcons.briefcase,
                     name: 'Salary',
                     timestamp: 'Yesterday',
                     amount: '3,500.00',
                     isIncome: true,
+                    barColor: AppColors.success,
+                    avatarBackgroundColor: AppColors.chartRamp[1].container, // Teal
+                    avatarIconColor: AppColors.chartRamp[1].text,
                   ),
+                  // Transfer transaction
                   TransactionRow(
-                    icon: TablerIcons.building_bank,
+                    icon: TablerIcons.arrow_right,
                     name: 'Transfer to Savings',
                     timestamp: 'Aug 5',
                     amount: '500.00',
                     isTransfer: true,
                     showDivider: false,
+                    barColor: AppColors.accent,
+                    avatarBackgroundColor: AppColors.accentContainer,
+                    avatarIconColor: AppColors.accentText,
                   ),
                 ],
               ),

@@ -6,6 +6,8 @@ import '../../data/database.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/theme/app_colors.dart';
 import '../../shared/theme/app_text_styles.dart';
+import '../../shared/utils/category_colors.dart';
+import '../../shared/utils/icon_mapper.dart';
 import '../../shared/widgets/filter_chip.dart';
 import '../../shared/widgets/transaction_row.dart';
 import '../accounts/cubit/accounts_cubit.dart';
@@ -306,6 +308,10 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
 
     final accountsState = context.read<AccountsCubit>().state;
     final accounts = accountsState is AccountsLoaded ? accountsState.activeAccounts : <Account>[];
+    final categoriesState = context.read<CategoriesCubit>().state;
+    final allCategories = categoriesState is CategoriesLoaded 
+        ? [...categoriesState.incomeCategories, ...categoriesState.expenseCategories] 
+        : <Category>[];
 
     return Column(
       children: [
@@ -329,16 +335,42 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             final tx = group.transactions[index];
             final account = accounts.where((a) => a.id == tx.accountId).firstOrNull;
             final accountName = account?.name ?? 'Unknown';
+            
+            // Get category information
+            final category = allCategories.where((c) => c.id == tx.categoryId).firstOrNull;
+            final categoryName = category?.name ?? tx.note ?? (tx.type == TransactionType.transfer ? 'Transfer' : (tx.type == TransactionType.income ? 'Income' : 'Expense'));
+            final categoryIcon = getTablerIcon(category?.icon);
+            final isTransfer = tx.type == TransactionType.transfer;
+            final isIncome = tx.type == TransactionType.income;
+            
+            // Get ramp color for category
+            final rampColor = getCategoryRampColor(tx.categoryId, allCategories);
+            
+            // For transfers without a category, use accent color
+            final avatarBgColor = isTransfer && category == null 
+                ? AppColors.accentContainer 
+                : rampColor.container;
+            final avatarIconColor = isTransfer && category == null 
+                ? AppColors.accentText 
+                : rampColor.text;
+            
+            // Bar color based on transaction type
+            final barColor = isTransfer 
+                ? AppColors.accent 
+                : (isIncome ? AppColors.success : AppColors.danger);
 
             return TransactionRow(
-              icon: tx.type == TransactionType.income ? TablerIcons.briefcase : TablerIcons.shopping_cart,
-              name: tx.note ?? (tx.type == TransactionType.income ? 'Income' : 'Expense'),
+              icon: categoryIcon,
+              name: categoryName,
               highlightQuery: _isSearching ? _searchController.text : null,
               timestamp: accountName,
               amount: tx.amount.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},'),
-              isIncome: tx.type == TransactionType.income,
-              isTransfer: tx.type == TransactionType.transfer,
+              isIncome: isIncome,
+              isTransfer: isTransfer,
               showDivider: true,
+              barColor: barColor,
+              avatarBackgroundColor: avatarBgColor,
+              avatarIconColor: avatarIconColor,
             );
           }),
         ),

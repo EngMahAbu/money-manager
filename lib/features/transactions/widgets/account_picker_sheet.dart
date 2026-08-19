@@ -31,88 +31,91 @@ class AccountPickerSheet extends StatelessWidget {
         color: AppColors.surfaceCard,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          BottomSheetHeader(title: l10n.chooseAccount),
-          Flexible(
-            child: ListView.separated(
-              shrinkWrap: true,
-              itemCount: accounts.length,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              separatorBuilder: (_, __) => const SizedBox(height: 8),
-              itemBuilder: (context, index) {
-                final account = accounts[index];
-                final isSelected = account.id == selectedAccountId;
-                
-                // Determine icon based on type from design doc
-                IconData accountIcon;
-                switch (account.type) {
-                  case AccountType.cash:
-                    accountIcon = TablerIcons.wallet;
-                    break;
-                  case AccountType.bank:
-                  case AccountType.savings:
-                    accountIcon = TablerIcons.building_bank;
-                    break;
-                  case AccountType.creditCard:
-                    accountIcon = TablerIcons.credit_card;
-                    break;
-                }
-
-                return GestureDetector(
-                  onTap: () => onSelected(account),
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: isSelected ? AppColors.accent : AppColors.surfaceInner,
-                      borderRadius: BorderRadius.circular(ThemeConstants.innerRadius),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          accountIcon, 
-                          size: 20, 
-                          color: isSelected ? Colors.white : AppColors.textSecondary,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                account.name,
-                                style: AppTextStyles.body.copyWith(
-                                  color: isSelected ? Colors.white : AppColors.textPrimary,
-                                  fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
-                                ),
-                              ),
-                              Text(
-                                '\$${account.startingBalance.toStringAsFixed(2)}', // Rounded as in screenshot
-                                style: AppTextStyles.muted.copyWith(
-                                  color: isSelected ? Colors.white.withValues(alpha: 0.7) : AppColors.textMuted,
-                                ),
-                              ),
-                            ],
+      child: ConstrainedBox(
+        constraints: BoxConstraints.loose(Size.fromHeight(MediaQuery.sizeOf(context).height * 0.7)),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            BottomSheetHeader(title: l10n.chooseAccount),
+            Flexible(
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: accounts.length,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                itemBuilder: (context, index) {
+                  final account = accounts[index];
+                  final isSelected = account.id == selectedAccountId;
+                  
+                  // Determine icon based on type from design doc
+                  IconData accountIcon;
+                  switch (account.type) {
+                    case AccountType.cash:
+                      accountIcon = TablerIcons.wallet;
+                      break;
+                    case AccountType.bank:
+                    case AccountType.savings:
+                      accountIcon = TablerIcons.building_bank;
+                      break;
+                    case AccountType.creditCard:
+                      accountIcon = TablerIcons.credit_card;
+                      break;
+                  }
+        
+                  return GestureDetector(
+                    onTap: () => onSelected(account),
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: isSelected ? AppColors.accent : AppColors.surfaceInner,
+                        borderRadius: BorderRadius.circular(ThemeConstants.innerRadius),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            accountIcon, 
+                            size: 20, 
+                            color: isSelected ? Colors.white : AppColors.textSecondary,
                           ),
-                        ),
-                        if (isSelected)
-                          const Icon(TablerIcons.check, color: Colors.white, size: 20),
-                      ],
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  account.name,
+                                  style: AppTextStyles.body.copyWith(
+                                    color: isSelected ? Colors.white : AppColors.textPrimary,
+                                    fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+                                  ),
+                                ),
+                                Text(
+                                  '\$${account.startingBalance.toStringAsFixed(2)}', // Rounded as in screenshot
+                                  style: AppTextStyles.muted.copyWith(
+                                    color: isSelected ? Colors.white.withValues(alpha: 0.7) : AppColors.textMuted,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (isSelected)
+                            const Icon(TablerIcons.check, color: Colors.white, size: 20),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-          const Divider(height: 32),
-          ListTile(
-            leading: const Icon(TablerIcons.plus, color: AppColors.accent),
-            title: Text(l10n.addAccountAction, style: const TextStyle(color: AppColors.accent)),
-            onTap: onAddAccount,
-          ),
-          const SizedBox(height: 16),
-        ],
+            const Divider(height: 32),
+            ListTile(
+              leading: const Icon(TablerIcons.plus, color: AppColors.accent),
+              title: Text(l10n.addAccountAction, style: const TextStyle(color: AppColors.accent)),
+              onTap: onAddAccount,
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
       ),
     );
   }

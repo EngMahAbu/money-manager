@@ -407,121 +407,123 @@ class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
-      child: Container(
-        height: MediaQuery.of(context).size.height * 0.7,
-        decoration: BoxDecoration(
-          color: AppColors.surfaceInner,
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(ThemeConstants.cardRadius * 1.25),
+      child: ConstrainedBox(
+        constraints: BoxConstraints.loose(Size.fromHeight(MediaQuery.sizeOf(context).height * 0.7)),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.surfaceInner,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(ThemeConstants.cardRadius * 1.25),
+            ),
           ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Drag handle
-            const SizedBox(height: 10),
-            Container(
-              width: 36,
-              height: 4,
-              decoration: BoxDecoration(
-                color: AppColors.borderStrong,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Title
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                'Choose currency',
-                style: AppTextStyles.body.copyWith(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Drag handle
+              const SizedBox(height: 10),
+              Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.borderStrong,
+                  borderRadius: BorderRadius.circular(2),
                 ),
               ),
-            ),
-            const SizedBox(height: 12),
-
-            // Search field
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Search currencies',
-                  filled: true,
-                  fillColor: AppColors.surfaceCard,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(
-                      ThemeConstants.innerRadius,
+              const SizedBox(height: 16),
+        
+              // Title
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  'Choose currency',
+                  style: AppTextStyles.body.copyWith(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+        
+              // Search field
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search currencies',
+                    filled: true,
+                    fillColor: AppColors.surfaceCard,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(
+                        ThemeConstants.innerRadius,
+                      ),
+                      borderSide: BorderSide.none,
                     ),
-                    borderSide: BorderSide.none,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 14,
+                    ),
+                    prefixIcon: const Icon(
+                      TablerIcons.search,
+                      size: 18,
+                      color: AppColors.textMuted,
+                    ),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 14,
-                  ),
-                  prefixIcon: const Icon(
-                    TablerIcons.search,
-                    size: 18,
-                    color: AppColors.textMuted,
-                  ),
+                  style: AppTextStyles.body,
                 ),
-                style: AppTextStyles.body,
               ),
-            ),
-            const SizedBox(height: 14),
-
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Common section
-                    if (_searchController.text.isEmpty) ...[
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Common',
-                            style: AppTextStyles.label.copyWith(
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.textSecondary,
+              const SizedBox(height: 14),
+        
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Common section
+                      if (_searchController.text.isEmpty) ...[
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Common',
+                              style: AppTextStyles.label.copyWith(
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textSecondary,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      ..._buildCurrencySection(commonCurrencyCodes),
-                      const SizedBox(height: 14),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'All currencies',
-                            style: AppTextStyles.label.copyWith(
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.textSecondary,
+                        const SizedBox(height: 8),
+                        ..._buildCurrencySection(commonCurrencyCodes),
+                        const SizedBox(height: 14),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'All currencies',
+                              style: AppTextStyles.label.copyWith(
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textSecondary,
+                              ),
                             ),
                           ),
                         ),
+                        const SizedBox(height: 8),
+                      ],
+        
+                      // All currencies section
+                      ..._buildCurrencySection(
+                        _filteredCurrencies.map((c) => c.code).toList(),
                       ),
-                      const SizedBox(height: 8),
                     ],
-
-                    // All currencies section
-                    ..._buildCurrencySection(
-                      _filteredCurrencies.map((c) => c.code).toList(),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-          ],
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );

@@ -79,7 +79,10 @@ class _DateRangePickerSheetState extends State<DateRangePickerSheet> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: (_startDate != null && _endDate != null) 
-                    ? () => widget.onRangeSelected(_startDate!, _endDate!) 
+                    ? () {
+                        widget.onRangeSelected(_startDate!, _endDate!);
+                        Navigator.pop(context);
+                      }
                     : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.accent,

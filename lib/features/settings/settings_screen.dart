@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+
 import '../../l10n/app_localizations.dart';
 import '../../shared/theme/app_colors.dart';
 import '../../shared/theme/app_text_styles.dart';
 import '../../shared/theme/theme_constants.dart';
+import '../../shared/widgets/currency_picker_sheet.dart';
 import '../../shared/widgets/list_row.dart';
 import '../../shared/widgets/toggle_switch.dart';
 import '../accounts/accounts_screen.dart';
@@ -37,8 +39,23 @@ class SettingsScreen extends StatelessWidget {
                   label: l10n.defaultCurrency,
                   value: state.currency,
                   trailing: const Icon(TablerIcons.chevron_right, size: 16, color: AppColors.textMuted),
-                  onTap: () {
-                    // TODO: Open currency picker
+                  onTap: () async {
+                    final selected = await showModalBottomSheet<Currency>(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (context) =>
+                          CurrencyPickerSheet(
+                            selectedCurrency: currencies.firstWhere(
+                                  (c) => c.code == state.currency,
+                              orElse: () => currencies[0],
+                            ),
+                          ),
+                    );
+                    if (selected != null && context.mounted) {
+                      context.read<SettingsCubit>().updateCurrency(
+                          selected.code);
+                    }
                   },
                 ),
                 ListRow(

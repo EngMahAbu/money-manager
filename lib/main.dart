@@ -1,32 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'data/database.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'data/daos.dart';
-import 'repositories/account_repository.dart';
-import 'repositories/category_repository.dart';
-import 'repositories/transaction_repository.dart';
+import 'data/database.dart';
 import 'features/accounts/cubit/accounts_cubit.dart';
 import 'features/accounts/cubit/accounts_state.dart';
 import 'features/categories/cubit/categories_cubit.dart';
-import 'features/transactions/cubit/transactions_cubit.dart';
+import 'features/dashboard/cubit/dashboard_cubit.dart';
+import 'features/home/home_screen.dart';
+import 'features/onboarding/onboarding_screen.dart';
 import 'features/reports/cubit/reports_cubit.dart';
 import 'features/settings/cubit/settings_cubit.dart';
-import 'features/dashboard/cubit/dashboard_cubit.dart';
-import 'features/onboarding/onboarding_screen.dart';
-import 'features/home/home_screen.dart';
+import 'features/transactions/cubit/transactions_cubit.dart';
 import 'l10n/app_localizations.dart';
+import 'repositories/account_repository.dart';
+import 'repositories/category_repository.dart';
+import 'repositories/settings_repository.dart';
+import 'repositories/transaction_repository.dart';
 import 'shared/theme/app_theme.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final database = AppDatabase();
   final dao = AppDao(database);
+  final prefs = await SharedPreferences.getInstance();
 
   runApp(MyApp(
     accountRepository: AccountRepository(dao),
     categoryRepository: CategoryRepository(dao),
     transactionRepository: TransactionRepository(dao),
+    settingsRepository: SettingsRepository(prefs),
   ));
 }
 
@@ -34,12 +39,14 @@ class MyApp extends StatelessWidget {
   final AccountRepository accountRepository;
   final CategoryRepository categoryRepository;
   final TransactionRepository transactionRepository;
+  final SettingsRepository settingsRepository;
 
   const MyApp({
     super.key,
     required this.accountRepository,
     required this.categoryRepository,
     required this.transactionRepository,
+    required this.settingsRepository,
   });
 
   @override
@@ -49,6 +56,7 @@ class MyApp extends StatelessWidget {
         RepositoryProvider.value(value: accountRepository),
         RepositoryProvider.value(value: categoryRepository),
         RepositoryProvider.value(value: transactionRepository),
+        RepositoryProvider.value(value: settingsRepository),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -68,7 +76,9 @@ class MyApp extends StatelessWidget {
             create: (context) => ReportsCubit(transactionRepository),
           ),
           BlocProvider(
-            create: (context) => SettingsCubit(),
+            create: (context) =>
+            SettingsCubit(settingsRepository)
+              ..loadSettings(),
           ),
         ],
         child: MaterialApp(

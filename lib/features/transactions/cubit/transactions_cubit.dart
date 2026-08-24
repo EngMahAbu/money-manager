@@ -1,7 +1,9 @@
 import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../repositories/transaction_repository.dart';
+
 import '../../../data/database.dart';
+import '../../../repositories/transaction_repository.dart';
 import 'transactions_state.dart';
 
 class TransactionsCubit extends Cubit<TransactionsState> {
@@ -14,13 +16,23 @@ class TransactionsCubit extends Cubit<TransactionsState> {
   List<int>? _categoryIds;
   String? _searchQuery;
 
-  TransactionsCubit(this._repository) : super(TransactionsInitial()) {
-    // Load current month by default
-    final now = DateTime.now();
-    loadTransactions(
-      startDate: DateTime(now.year, now.month, 1),
-      endDate: DateTime(now.year, now.month + 1, 0, 23, 59, 59, 999),
-    );
+  TransactionsCubit(this._repository, {bool loadInitial = true})
+      : super(TransactionsInitial()) {
+    if (loadInitial) {
+      // Load current month by default
+      final now = DateTime.now();
+      loadTransactions(
+        startDate: DateTime(now.year, now.month, 1),
+        endDate: DateTime(
+            now.year,
+            now.month + 1,
+            0,
+            23,
+            59,
+            59,
+            999),
+      );
+    }
   }
 
   void loadTransactions({

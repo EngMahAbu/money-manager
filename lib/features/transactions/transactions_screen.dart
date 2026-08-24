@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:intl/intl.dart';
+
 import '../../data/database.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/theme/app_colors.dart';
@@ -160,23 +161,10 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
 
           if (state is TransactionsLoaded) {
             final transactions = state.transactions;
-            if (transactions.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(TablerIcons.receipt_off, size: 48, color: AppColors.textMuted),
-                    const SizedBox(height: 16),
-                    Text('No transactions found', style: AppTextStyles.muted),
-                  ],
-                ),
-              );
-            }
-
             final groupedTransactions = _groupTransactionsByDate(transactions);
             final accountIds = state.accountIds;
             final categoryIds = state.categoryIds;
-            
+
             return CustomScrollView(
               key: const PageStorageKey('transactions_scroll_view'),
               slivers: [
@@ -187,27 +175,38 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                     delegate: _FilterHeaderDelegate(
                       child: Container(
                         height: 60,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
                         child: ListView(
                           scrollDirection: Axis.horizontal,
                           children: [
                             AppFilterChip(
-                              label: state.startDate != null ? 'Filtered Range' : l10n.thisMonth,
+                              label: state.startDate != null
+                                  ? 'Filtered Range'
+                                  : l10n.thisMonth,
                               isActive: state.startDate != null,
                               onTap: () => _showDateRangePicker(state),
                             ),
                             const SizedBox(width: 8),
                             AppFilterChip(
-                              label: (accountIds != null && accountIds.length == 1)
-                                  ? 'Account selected' 
-                                  : (accountIds != null && accountIds.isNotEmpty ? 'Multiple accounts' : l10n.allAccounts),
-                              isActive: accountIds != null && accountIds.isNotEmpty,
+                              label: (accountIds != null &&
+                                  accountIds.length == 1)
+                                  ? 'Account selected'
+                                  : (accountIds != null && accountIds.isNotEmpty
+                                  ? 'Multiple accounts'
+                                  : l10n.allAccounts),
+                              isActive: accountIds != null &&
+                                  accountIds.isNotEmpty,
                               onTap: () => _showAccountMultiSelect(state),
                             ),
                             const SizedBox(width: 8),
                             AppFilterChip(
-                              label: (categoryIds != null && categoryIds.isNotEmpty) ? 'Category selected' : l10n.category,
-                              isActive: categoryIds != null && categoryIds.isNotEmpty,
+                              label: (categoryIds != null &&
+                                  categoryIds.isNotEmpty)
+                                  ? 'Category selected'
+                                  : l10n.category,
+                              isActive: categoryIds != null &&
+                                  categoryIds.isNotEmpty,
                               onTap: () => _showCategoryMultiSelect(state),
                             ),
                           ],
@@ -215,27 +214,46 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       ),
                     ),
                   ),
-                if (_isSearching)
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                      child: Text(
-                        l10n.results(state.transactions.length),
-                        style: AppTextStyles.muted,
+                if (transactions.isEmpty)
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(TablerIcons.receipt_off,
+                              size: 48, color: AppColors.textMuted),
+                          const SizedBox(height: 16),
+                          Text('No transactions found',
+                              style: AppTextStyles.muted),
+                        ],
                       ),
                     ),
-                  ),
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      if (index >= groupedTransactions.length) return null;
-                      final group = groupedTransactions[index];
-                      return _buildDateGroup(group, l10n);
-                    },
-                    childCount: groupedTransactions.length,
-                  ),
-                ),
-                const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
+                  )
+                else
+                  ...[
+                    if (_isSearching)
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                          child: Text(
+                            l10n.results(state.transactions.length),
+                            style: AppTextStyles.muted,
+                          ),
+                        ),
+                      ),
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                            (context, index) {
+                          if (index >= groupedTransactions.length) return null;
+                          final group = groupedTransactions[index];
+                          return _buildDateGroup(group, l10n);
+                        },
+                        childCount: groupedTransactions.length,
+                      ),
+                    ),
+                    const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
+                  ],
               ],
             );
           }

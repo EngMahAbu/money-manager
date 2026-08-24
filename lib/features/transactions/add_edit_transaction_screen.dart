@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:intl/intl.dart';
+
 import '../../data/database.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/theme/app_colors.dart';
@@ -10,18 +11,18 @@ import '../../shared/theme/app_text_styles.dart';
 import '../../shared/theme/theme_constants.dart';
 import '../../shared/utils/expression_evaluator.dart';
 import '../../shared/widgets/field_row.dart';
+import '../accounts/add_edit_account_screen.dart';
 import '../accounts/cubit/accounts_cubit.dart';
 import '../accounts/cubit/accounts_state.dart';
+import '../categories/add_edit_category_screen.dart';
 import '../categories/cubit/categories_cubit.dart';
 import '../categories/cubit/categories_state.dart';
 import 'cubit/transactions_cubit.dart';
-import 'widgets/numeric_keypad.dart';
 import 'widgets/account_picker_sheet.dart';
 import 'widgets/category_picker_sheet.dart';
 import 'widgets/date_picker_sheet.dart';
+import 'widgets/numeric_keypad.dart';
 import 'widgets/receipts_strip.dart';
-import '../accounts/add_edit_account_screen.dart';
-import '../categories/add_edit_category_screen.dart';
 
 class AddEditTransactionScreen extends StatefulWidget {
   final Transaction? transaction;
@@ -72,10 +73,12 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
         }
       }
 
-      if (categoriesState is CategoriesLoaded && widget.transaction!.categoryId != null) {
+      if (categoriesState is CategoriesLoaded &&
+          widget.transaction!.categoryId != null) {
         final allCategories = [
           ...categoriesState.incomeCategories,
           ...categoriesState.expenseCategories,
+          ...categoriesState.archivedCategories,
         ];
         _selectedCategory = allCategories
             .where((c) => c.id == widget.transaction!.categoryId)
@@ -322,7 +325,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
     );
   }
 
-  void _save() {
+  Future<void> _save() async {
     final l10n = AppLocalizations.of(context)!;
     final amount = double.tryParse(_amountString) ?? 0.0;
 
@@ -345,12 +348,38 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.errorTransferSameAccount)));
         return;
       }
+
+      if (_selectedAccount!.currency != _selectedToAccount!.currency) {
+        final proceed = await showDialog<bool>(
+          context: context,
+          builder: (context) =>
+              AlertDialog(
+                title: Text(l10n.transferCurrencyMismatchTitle),
+                content: Text(l10n.transferCurrencyMismatch(
+                    _selectedAccount!.currency, _selectedToAccount!.currency)),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, false),
+                    child: Text(l10n.cancel),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, true),
+                    child: Text(l10n.proceed),
+                  ),
+                ],
+              ),
+        );
+
+        if (proceed != true) return;
+      }
     } else {
       if (_selectedCategory == null) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.chooseCategory)));
         return;
       }
     }
+
+    if (!mounted) return;
 
     final cubit = context.read<TransactionsCubit>();
     if (widget.transaction != null) {

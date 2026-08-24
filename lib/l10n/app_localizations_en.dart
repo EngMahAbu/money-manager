@@ -289,6 +289,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get apply => 'Apply';
 
   @override
+  String get proceed => 'Proceed';
+
+  @override
   String get addNote => 'Add a note';
 
   @override
@@ -344,6 +347,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorReceiptLimit => 'Maximum 5 receipts allowed';
+
+  @override
+  String transferCurrencyMismatch(String from, String to) {
+    return 'The selected accounts have different currencies ($from and $to). Do you want to proceed?';
+  }
+
+  @override
+  String get transferCurrencyMismatchTitle => 'Currency Mismatch';
 
   @override
   String get note => 'Note';

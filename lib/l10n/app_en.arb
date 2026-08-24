@@ -95,6 +95,7 @@
   "today": "Today",
   "yesterday": "Yesterday",
   "apply": "Apply",
+  "proceed": "Proceed",
   "addNote": "Add a note",
   "receipts": "Receipts",
   "addAccountAction": "Add account",
@@ -114,7 +115,18 @@
   "errorTransferSameAccount": "Cannot transfer to the same account",
   "errorNoteLimit": "Note cannot exceed 150 characters",
   "errorReceiptLimit": "Maximum 5 receipts allowed",
-
+  "transferCurrencyMismatch": "The selected accounts have different currencies ({from} and {to}). Do you want to proceed?",
+  "@transferCurrencyMismatch": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "transferCurrencyMismatchTitle": "Currency Mismatch",
   "note": "Note",
   "noNoteAdded": "No note added",
   "noReceiptsAttached": "No receipts attached",

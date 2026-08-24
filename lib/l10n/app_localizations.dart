@@ -628,6 +628,12 @@ abstract class AppLocalizations {
   /// **'Apply'**
   String get apply;
 
+  /// No description provided for @proceed.
+  ///
+  /// In en, this message translates to:
+  /// **'Proceed'**
+  String get proceed;
+
   /// No description provided for @addNote.
   ///
   /// In en, this message translates to:
@@ -735,6 +741,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Maximum 5 receipts allowed'**
   String get errorReceiptLimit;
+
+  /// No description provided for @transferCurrencyMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'The selected accounts have different currencies ({from} and {to}). Do you want to proceed?'**
+  String transferCurrencyMismatch(String from, String to);
+
+  /// No description provided for @transferCurrencyMismatchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency Mismatch'**
+  String get transferCurrencyMismatchTitle;
 
   /// No description provided for @note.
   ///

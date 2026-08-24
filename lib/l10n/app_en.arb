@@ -68,6 +68,7 @@
   "last30Days": "Last 30 days",
   "last6Months": "Last 6 months",
   "incomeVsExpense": "Income vs expense",
+  "byCategory": "By category",
   "spendingByCategory": "Spending by category",
   "balanceTrend": "Balance trend",
   "barChartHint": "Tap any bar for details",

@@ -1,9 +1,11 @@
 import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
-import '../../../repositories/transaction_repository.dart';
-import '../../../data/database.dart';
+
 import '../../../data/daos.dart';
+import '../../../data/database.dart';
+import '../../../repositories/transaction_repository.dart';
 import 'reports_state.dart';
 
 class ReportsCubit extends Cubit<ReportsState> {
@@ -33,21 +35,29 @@ class ReportsCubit extends Cubit<ReportsState> {
     ));
     _subscription?.cancel();
 
-    _subscription = Rx.combineLatest6(
+    _subscription = Rx.combineLatest7(
       _transactionRepository.watchPeriodTotal(startDate, endDate, TransactionType.income),
       _transactionRepository.watchPeriodTotal(startDate, endDate, TransactionType.expense),
-      _transactionRepository.watchCategoryBreakdown(startDate, endDate, accountIds),
+      _transactionRepository.watchCategoryBreakdown(
+          startDate, endDate, accountIds, type: TransactionType.income),
+      _transactionRepository.watchCategoryBreakdown(
+          startDate, endDate, accountIds, type: TransactionType.expense),
       _transactionRepository.watchBalanceTrend(startDate, endDate, accountIds),
       _transactionRepository.watchMonthlyTotals(startDate, endDate, TransactionType.income),
       _transactionRepository.watchMonthlyTotals(startDate, endDate, TransactionType.expense),
-      (double income, double expense, Map<int, double> breakdown, List<DateTimeDouble> trend,
-          List<DateTimeDouble> incomeSeries, List<DateTimeDouble> expenseSeries) {
-        final percentages = _calculateLargestRemainderPercentages(breakdown);
+          (double income, double expense, Map<int, double> incomeBreakdown,
+          Map<int, double> expenseBreakdown,
+          List<DateTimeDouble> trend, List<DateTimeDouble> incomeSeries,
+          List<DateTimeDouble> expenseSeries) {
         return ReportsState(
           totalIncome: income,
           totalExpense: expense,
-          categoryBreakdown: breakdown,
-          categoryPercentages: percentages,
+          incomeBreakdown: incomeBreakdown,
+          incomePercentages: _calculateLargestRemainderPercentages(
+              incomeBreakdown),
+          expenseBreakdown: expenseBreakdown,
+          expensePercentages: _calculateLargestRemainderPercentages(
+              expenseBreakdown),
           balanceTrend: trend,
           monthlyIncomeSeries: incomeSeries,
           monthlyExpenseSeries: expenseSeries,

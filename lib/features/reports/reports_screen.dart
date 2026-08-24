@@ -10,6 +10,7 @@ import '../../l10n/app_localizations.dart';
 import '../../shared/theme/app_colors.dart';
 import '../../shared/theme/app_text_styles.dart';
 import '../../shared/theme/theme_constants.dart';
+import '../../shared/utils/category_colors.dart';
 import '../../shared/widgets/filter_chip.dart';
 import '../accounts/cubit/accounts_cubit.dart';
 import '../accounts/cubit/accounts_state.dart';
@@ -30,6 +31,7 @@ class ReportsScreen extends StatefulWidget {
 class _ReportsScreenState extends State<ReportsScreen> {
   int? _touchedBarIndex;
   int? _touchedLineIndex;
+  TransactionType _breakdownType = TransactionType.expense;
 
   @override
   void initState() {
@@ -76,7 +78,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 const SizedBox(height: 24),
                 _buildIncomeVsExpense(state, l10n),
                 const Divider(height: 48),
-                _buildSpendingByCategory(state, l10n),
+                _buildCategoryBreakdown(state, l10n),
                 const Divider(height: 48),
                 _buildBalanceTrend(state, l10n),
                 const SizedBox(height: 40),
@@ -247,8 +249,9 @@ class _ReportsScreenState extends State<ReportsScreen> {
                           showTitles: true,
                           getTitlesWidget: (value, meta) {
                             if (value < 0 ||
-                                value >= state.monthlyIncomeSeries.length)
+                                value >= state.monthlyIncomeSeries.length) {
                               return const SizedBox();
+                            }
                             final date = state.monthlyIncomeSeries[value
                                 .toInt()].date;
                             final isTouched = value.toInt() == _touchedBarIndex;
@@ -361,23 +364,102 @@ class _ReportsScreenState extends State<ReportsScreen> {
     );
   }
 
-  Widget _buildSpendingByCategory(ReportsState state, AppLocalizations l10n) {
+  Widget _buildTypeToggle(AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceInner,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _buildToggleItem(
+              label: l10n.expense,
+              isSelected: _breakdownType == TransactionType.expense,
+              onTap: () =>
+                  setState(() => _breakdownType = TransactionType.expense),
+              activeColor: AppColors.danger,
+              activeTextColor: AppColors.dangerText,
+              activeBgColor: AppColors.dangerContainer,
+            ),
+          ),
+          const SizedBox(width: 4),
+          Expanded(
+            child: _buildToggleItem(
+              label: l10n.income,
+              isSelected: _breakdownType == TransactionType.income,
+              onTap: () =>
+                  setState(() => _breakdownType = TransactionType.income),
+              activeColor: AppColors.success,
+              activeTextColor: AppColors.successText,
+              activeBgColor: AppColors.successContainer,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildToggleItem({
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+    required Color activeColor,
+    required Color activeTextColor,
+    required Color activeBgColor,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? activeBgColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Text(
+          label,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+            color: isSelected ? activeTextColor : AppColors.textSecondary,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategoryBreakdown(ReportsState state, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(l10n.spendingByCategory, style: AppTextStyles.sectionHeader),
+        Text(l10n.byCategory, style: AppTextStyles.sectionHeader),
+        const SizedBox(height: 12),
+        _buildTypeToggle(l10n),
         const SizedBox(height: 24),
         BlocBuilder<CategoriesCubit, CategoriesState>(
           builder: (context, catState) {
             if (catState is! CategoriesLoaded) return const SizedBox();
-            
-            final breakdown = state.categoryBreakdown;
+
+            final breakdown = _breakdownType == TransactionType.expense
+                ? state.expenseBreakdown
+                : state.incomeBreakdown;
+            final percentages = _breakdownType == TransactionType.expense
+                ? state.expensePercentages
+                : state.incomePercentages;
+
             if (breakdown.isEmpty) return const Center(child: Text('No data'));
 
             final sortedCategories = breakdown.entries.toList()
               ..sort((a, b) => b.value.compareTo(a.value));
 
             final total = breakdown.values.fold(0.0, (sum, v) => sum + v);
+            final allCategories = [
+              ...catState.incomeCategories,
+              ...catState.expenseCategories,
+              ...catState.archivedCategories
+            ];
 
             return Row(
               children: [
@@ -392,7 +474,8 @@ class _ReportsScreenState extends State<ReportsScreen> {
                           centerSpaceRadius: 35,
                           sections: List.generate(sortedCategories.length, (index) {
                             final entry = sortedCategories[index];
-                            final colorSet = AppColors.chartRamp[index % AppColors.chartRamp.length];
+                            final colorSet = getCategoryRampColor(
+                                entry.key, allCategories);
                             return PieChartSectionData(
                               color: colorSet.fill,
                               value: entry.value,
@@ -422,10 +505,11 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   child: Column(
                     children: List.generate(sortedCategories.length, (index) {
                       final entry = sortedCategories[index];
-                      final category = [...catState.incomeCategories, ...catState.expenseCategories, ...catState.archivedCategories]
-                          .firstWhere((c) => c.id == entry.key);
-                      final percentage = state.categoryPercentages[entry.key] ?? 0;
-                      final colorSet = AppColors.chartRamp[index % AppColors.chartRamp.length];
+                      final category = allCategories.firstWhere((c) =>
+                      c.id == entry.key);
+                      final percentage = percentages[entry.key] ?? 0;
+                      final colorSet = getCategoryRampColor(
+                          entry.key, allCategories);
 
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),

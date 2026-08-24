@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:rxdart/rxdart.dart';
+
 import 'database.dart';
 
 part 'daos.g.dart';
@@ -101,12 +102,16 @@ class AppDao extends DatabaseAccessor<AppDatabase> with _$AppDaoMixin {
     return query.watch().map((list) => list.fold(0.0, (sum, t) => sum + t.amount));
   }
 
-  Stream<Map<int, double>> watchCategoryBreakdown(DateTime start, DateTime end, List<int>? accountIds) {
+  Stream<Map<int, double>> watchCategoryBreakdown(DateTime start, DateTime end,
+      List<int>? accountIds, {TransactionType? type}) {
     final query = select(transactions)
       ..where((t) {
         Expression<bool> predicate = t.date.isBetweenValues(start, end) & t.categoryId.isNotNull();
         if (accountIds != null && accountIds.isNotEmpty) {
           predicate = predicate & t.accountId.isIn(accountIds);
+        }
+        if (type != null) {
+          predicate = predicate & t.type.equalsValue(type);
         }
         return predicate;
       });

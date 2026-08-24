@@ -466,6 +466,12 @@ abstract class AppLocalizations {
   /// **'Income vs expense'**
   String get incomeVsExpense;
 
+  /// No description provided for @byCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'By category'**
+  String get byCategory;
+
   /// No description provided for @spendingByCategory.
   ///
   /// In en, this message translates to:

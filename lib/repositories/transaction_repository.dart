@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+
 import '../data/daos.dart';
 import '../data/database.dart';
 
@@ -29,8 +30,9 @@ class TransactionRepository {
   Stream<double> watchPeriodTotal(DateTime start, DateTime end, TransactionType type) =>
       _dao.watchPeriodTotal(start, end, type);
 
-  Stream<Map<int, double>> watchCategoryBreakdown(DateTime start, DateTime end, List<int>? accountIds) =>
-      _dao.watchCategoryBreakdown(start, end, accountIds);
+  Stream<Map<int, double>> watchCategoryBreakdown(DateTime start, DateTime end,
+      List<int>? accountIds, {TransactionType? type}) =>
+      _dao.watchCategoryBreakdown(start, end, accountIds, type: type);
 
   Stream<List<DateTimeDouble>> watchBalanceTrend(DateTime start, DateTime end, List<int>? accountIds) =>
       _dao.watchBalanceTrend(start, end, accountIds);

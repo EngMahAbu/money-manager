@@ -1,10 +1,12 @@
 import 'package:equatable/equatable.dart';
+
 import '../../../data/daos.dart';
-import '../../../data/database.dart';
 
 class ReportsState extends Equatable {
-  final Map<int, double> categoryBreakdown;
-  final Map<int, double> categoryPercentages; // Largest-remainder rounded
+  final Map<int, double> expenseBreakdown;
+  final Map<int, double> expensePercentages;
+  final Map<int, double> incomeBreakdown;
+  final Map<int, double> incomePercentages;
   final List<DateTimeDouble> balanceTrend;
   final List<DateTimeDouble> monthlyIncomeSeries;
   final List<DateTimeDouble> monthlyExpenseSeries;
@@ -17,8 +19,10 @@ class ReportsState extends Equatable {
   final List<int>? accountIds;
 
   const ReportsState({
-    this.categoryBreakdown = const {},
-    this.categoryPercentages = const {},
+    this.expenseBreakdown = const {},
+    this.expensePercentages = const {},
+    this.incomeBreakdown = const {},
+    this.incomePercentages = const {},
     this.balanceTrend = const [],
     this.monthlyIncomeSeries = const [],
     this.monthlyExpenseSeries = const [],
@@ -32,8 +36,10 @@ class ReportsState extends Equatable {
   });
 
   ReportsState copyWith({
-    Map<int, double>? categoryBreakdown,
-    Map<int, double>? categoryPercentages,
+    Map<int, double>? expenseBreakdown,
+    Map<int, double>? expensePercentages,
+    Map<int, double>? incomeBreakdown,
+    Map<int, double>? incomePercentages,
     List<DateTimeDouble>? balanceTrend,
     List<DateTimeDouble>? monthlyIncomeSeries,
     List<DateTimeDouble>? monthlyExpenseSeries,
@@ -46,8 +52,10 @@ class ReportsState extends Equatable {
     List<int>? accountIds,
   }) {
     return ReportsState(
-      categoryBreakdown: categoryBreakdown ?? this.categoryBreakdown,
-      categoryPercentages: categoryPercentages ?? this.categoryPercentages,
+      expenseBreakdown: expenseBreakdown ?? this.expenseBreakdown,
+      expensePercentages: expensePercentages ?? this.expensePercentages,
+      incomeBreakdown: incomeBreakdown ?? this.incomeBreakdown,
+      incomePercentages: incomePercentages ?? this.incomePercentages,
       balanceTrend: balanceTrend ?? this.balanceTrend,
       monthlyIncomeSeries: monthlyIncomeSeries ?? this.monthlyIncomeSeries,
       monthlyExpenseSeries: monthlyExpenseSeries ?? this.monthlyExpenseSeries,
@@ -63,9 +71,11 @@ class ReportsState extends Equatable {
 
   @override
   List<Object?> get props => [
-        categoryBreakdown,
-        categoryPercentages,
-        balanceTrend,
+    expenseBreakdown,
+    expensePercentages,
+    incomeBreakdown,
+    incomePercentages,
+    balanceTrend,
         monthlyIncomeSeries,
         monthlyExpenseSeries,
         totalIncome,

@@ -45,15 +45,20 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
   DateTime _selectedDate = DateTime.now();
   String? _note;
   final List<String> _receipts = [];
+  bool _shouldReplaceAmount = false;
 
   @override
   void initState() {
     super.initState();
     _selectedType = widget.transaction?.type ?? TransactionType.expense;
     if (widget.transaction != null) {
-      _amountString = widget.transaction!.amount.toStringAsFixed(2);
+      final amount = widget.transaction!.amount;
+      _amountString =
+      amount % 1 == 0 ? amount.toInt().toString() : amount.toStringAsFixed(
+          2);
       _expression = _amountString;
       _lastValidAmount = _amountString;
+      _shouldReplaceAmount = true;
       _selectedDate = widget.transaction!.date;
       _note = widget.transaction!.note;
 
@@ -115,64 +120,77 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
       // but keep the final amount
       if (!_isCalculatorExpanded) {
         _expression = '';
-      } else if (_expression.isEmpty) {
+      } else {
         // Entering calculator mode - initialize expression with current amount
-        _expression = _amountString;
+        _shouldReplaceAmount = false;
+        if (_expression.isEmpty || _expression == '0') {
+          _expression = _amountString;
+        }
       }
     });
   }
 
   void _onKeyPressed(String key) {
     setState(() {
-      // Handle different key types
-      if (key == '.') {
-        // Allow one decimal point in each number of the expression.
-        var lastOperatorIndex = -1;
-        for (final operator in '+-×÷'.split('')) {
-          lastOperatorIndex =
-              lastOperatorIndex < _expression.lastIndexOf(operator)
-              ? _expression.lastIndexOf(operator)
-              : lastOperatorIndex;
+      if (_shouldReplaceAmount) {
+        _shouldReplaceAmount = false;
+        if (key == '.') {
+          _expression = '0.';
+        } else {
+          _expression = key;
         }
-        final currentNumber = _expression.substring(lastOperatorIndex + 1);
-        if (currentNumber.contains('.')) return;
-        // If expression is empty or ends with operator, start with "0."
-        if (_expression.isEmpty ||
-            _expression.endsWith('+') ||
-            _expression.endsWith('-') ||
-            _expression.endsWith('×') ||
-            _expression.endsWith('÷')) {
-          _expression += '0';
-        }
-        _expression += key;
+        _lastValidAmount = '0';
       } else {
-        // It's a digit
-        // If expression is empty or ends with operator (except -), start fresh
-        if (_expression.isEmpty ||
-            _expression.endsWith('+') ||
-            _expression.endsWith('×') ||
-            _expression.endsWith('÷')) {
+        // Handle different key types
+        if (key == '.') {
+          // Allow one decimal point in each number of the expression.
+          var lastOperatorIndex = -1;
+          for (final operator in '+-×÷'.split('')) {
+            lastOperatorIndex =
+            lastOperatorIndex < _expression.lastIndexOf(operator)
+                ? _expression.lastIndexOf(operator)
+                : lastOperatorIndex;
+          }
+          final currentNumber = _expression.substring(lastOperatorIndex + 1);
+          if (currentNumber.contains('.')) return;
+          // If expression is empty or ends with operator, start with "0."
+          if (_expression.isEmpty ||
+              _expression.endsWith('+') ||
+              _expression.endsWith('-') ||
+              _expression.endsWith('×') ||
+              _expression.endsWith('÷')) {
+            _expression += '0';
+          }
           _expression += key;
-        } else if (_expression.endsWith('-') && _expression.length > 1) {
-          // Handle negative numbers: if we have "-" and it's not at position 0, just append
-          // But if it's at position 0 (like "-5"), we need to check
-          final prevChar = _expression[_expression.length - 2];
-          if (prevChar == '+' ||
-              prevChar == '-' ||
-              prevChar == '×' ||
-              prevChar == '÷') {
-            // The "-" is an operator, start the number
+        } else {
+          // It's a digit
+          // If expression is empty or ends with operator (except -), start fresh
+          if (_expression.isEmpty ||
+              _expression.endsWith('+') ||
+              _expression.endsWith('×') ||
+              _expression.endsWith('÷')) {
             _expression += key;
+          } else if (_expression.endsWith('-') && _expression.length > 1) {
+            // Handle negative numbers: if we have "-" and it's not at position 0, just append
+            // But if it's at position 0 (like "-5"), we need to check
+            final prevChar = _expression[_expression.length - 2];
+            if (prevChar == '+' ||
+                prevChar == '-' ||
+                prevChar == '×' ||
+                prevChar == '÷') {
+              // The "-" is an operator, start the number
+              _expression += key;
+            } else {
+              // The "-" is part of a negative number, append to it
+              _expression += key;
+            }
+          } else if (_expression == '0') {
+            // Replace the 0
+            _expression = key;
           } else {
-            // The "-" is part of a negative number, append to it
+            // Append to the current number
             _expression += key;
           }
-        } else if (_expression == '0') {
-          // Replace the 0
-          _expression = key;
-        } else {
-          // Append to the current number
-          _expression += key;
         }
       }
       _evaluateAndUpdateAmount();
@@ -181,11 +199,16 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
 
   void _onDeletePressed() {
     setState(() {
-      if (_expression.isNotEmpty) {
-        _expression = _expression.substring(0, _expression.length - 1);
-      }
-      if (_expression.isEmpty) {
+      if (_shouldReplaceAmount) {
+        _shouldReplaceAmount = false;
         _expression = '0';
+      } else {
+        if (_expression.isNotEmpty) {
+          _expression = _expression.substring(0, _expression.length - 1);
+        }
+        if (_expression.isEmpty) {
+          _expression = '0';
+        }
       }
       _evaluateAndUpdateAmount();
     });
@@ -193,6 +216,10 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
 
   void _onOperatorPressed(String op) {
     setState(() {
+      if (_shouldReplaceAmount) {
+        _shouldReplaceAmount = false;
+      }
+
       // If expression is empty or just "0", don't add operator
       if (_expression.isEmpty || _expression == '0') {
         return;

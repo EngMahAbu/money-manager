@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+
 import '../../../data/database.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../../repositories/account_repository.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_text_styles.dart';
 import '../../../shared/theme/theme_constants.dart';
+import '../../../shared/utils/currency_formatter.dart';
 import '../../../shared/widgets/bottom_sheet_header.dart';
-
-import '../../../l10n/app_localizations.dart';
-import '../../../repositories/account_repository.dart';
 
 class AccountPickerSheet extends StatefulWidget {
   final List<Account> accounts;
@@ -112,7 +113,10 @@ class _AccountPickerSheetState extends State<AccountPickerSheet> {
                                           ),
                                         ),
                                         Text(
-                                          '\$${currentBalance.toStringAsFixed(2)}',
+                                          '${CurrencyFormatter.format(
+                                              currentBalance,
+                                              account.currency)} · ${account
+                                              .currency}',
                                           style: AppTextStyles.muted.copyWith(
                                             color: isSelected ? Colors.white.withValues(alpha: 0.7) : AppColors.textMuted,
                                           ),

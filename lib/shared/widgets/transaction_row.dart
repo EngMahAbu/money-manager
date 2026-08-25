@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 import '../theme/theme_constants.dart';
+import '../utils/currency_formatter.dart';
 
 class TransactionRow extends StatelessWidget {
   final IconData icon;
   final String name;
   final String? highlightQuery;
   final String timestamp;
-  final String amount;
+  final double amount;
+  final String? currencyCode;
   final bool isIncome;
   final bool isTransfer;
   final bool showDivider;
@@ -24,6 +27,7 @@ class TransactionRow extends StatelessWidget {
     this.highlightQuery,
     required this.timestamp,
     required this.amount,
+    this.currencyCode,
     this.isIncome = false,
     this.isTransfer = false,
     this.showDivider = true,
@@ -48,7 +52,11 @@ class TransactionRow extends StatelessWidget {
         ? AppColors.textPrimary 
         : (isIncome ? AppColors.success : AppColors.danger);
     final prefix = isTransfer ? '' : (isIncome ? '+' : '-');
-    
+
+    final formattedAmount = currencyCode != null
+        ? CurrencyFormatter.format(amount, currencyCode!)
+        : '\$${amount.toStringAsFixed(2)}';
+
     // Determine bar color based on type
     final effectiveBarColor = barColor 
         ?? (isTransfer 
@@ -98,7 +106,7 @@ class TransactionRow extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    '$prefix$amount',
+                    '$prefix$formattedAmount',
                     style: AppTextStyles.body.copyWith(
                       fontWeight: FontWeight.w500,
                       color: amountColor,

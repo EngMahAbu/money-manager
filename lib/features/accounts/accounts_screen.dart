@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+
 import '../../data/database.dart';
 import '../../l10n/app_localizations.dart';
+import '../../repositories/account_repository.dart';
 import '../../shared/theme/app_colors.dart';
 import '../../shared/theme/app_text_styles.dart';
 import '../../shared/theme/theme_constants.dart';
+import '../../shared/utils/currency_formatter.dart';
 import '../../shared/widgets/list_row.dart';
+import 'account_detail_screen.dart';
+import 'add_edit_account_screen.dart';
 import 'cubit/accounts_cubit.dart';
 import 'cubit/accounts_state.dart';
-import 'add_edit_account_screen.dart';
-import 'account_detail_screen.dart';
-
-import '../../repositories/account_repository.dart';
 
 class AccountsScreen extends StatefulWidget {
   const AccountsScreen({super.key});
@@ -85,6 +86,11 @@ class _AccountsScreenState extends State<AccountsScreen> {
                               '\$${netWorth.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
                               style: AppTextStyles.netWorth,
                             ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Raw sum across currencies — no conversion applied',
+                              style: AppTextStyles.muted,
+                            ),
                           ],
                         ),
                       );
@@ -103,8 +109,10 @@ class _AccountsScreenState extends State<AccountsScreen> {
                             return ListRow(
                               leading: Icon(_getAccountIcon(account.type), size: 20, color: AppColors.textSecondary),
                               label: account.name,
-                              subtitle: _getAccountTypeLabel(account.type, l10n),
-                              value: '\$${balance.toStringAsFixed(2)}',
+                              subtitle: '${_getAccountTypeLabel(
+                                  account.type, l10n)} · ${account.currency}',
+                              value: CurrencyFormatter.format(
+                                  balance, account.currency),
                               valueColor: balance < 0 ? AppColors.dangerText : null,
                               trailing: const Icon(TablerIcons.chevron_right, size: 16, color: AppColors.textMuted),
                               onTap: () {
@@ -156,8 +164,11 @@ class _AccountsScreenState extends State<AccountsScreen> {
                                   return ListRow(
                                     leading: Icon(_getAccountIcon(account.type), size: 20, color: AppColors.textMuted),
                                     label: account.name,
-                                    subtitle: '${_getAccountTypeLabel(account.type, l10n)} · archived',
-                                    value: '\$${balance.toStringAsFixed(2)}',
+                                    subtitle: '${_getAccountTypeLabel(
+                                        account.type, l10n)} · ${account
+                                        .currency} · archived',
+                                    value: CurrencyFormatter.format(
+                                        balance, account.currency),
                                     trailing: TextButton(
                                       onPressed: () => context.read<AccountsCubit>().restoreAccount(account.id),
                                       style: TextButton.styleFrom(

@@ -218,6 +218,9 @@ class _AddEditAccountScreenState extends State<AddEditAccountScreen> {
               decoration: InputDecoration(
                 filled: true,
                 fillColor: AppColors.surfaceInner,
+                prefixText: '${_selectedCurrencyObj.symbol} ',
+                prefixStyle: AppTextStyles.body.copyWith(
+                    color: AppColors.textSecondary),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(
                     ThemeConstants.innerRadius,

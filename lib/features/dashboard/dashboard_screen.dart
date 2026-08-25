@@ -2,26 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:intl/intl.dart';
+
+import '../../data/database.dart';
 import '../../l10n/app_localizations.dart';
+import '../../repositories/account_repository.dart';
 import '../../shared/theme/app_colors.dart';
 import '../../shared/theme/app_text_styles.dart';
 import '../../shared/theme/theme_constants.dart';
 import '../../shared/utils/category_colors.dart';
+import '../../shared/utils/currency_formatter.dart';
 import '../../shared/utils/icon_mapper.dart';
-import '../../shared/widgets/metric_card.dart';
 import '../../shared/widgets/list_row.dart';
-import '../../shared/widgets/transaction_row.dart';
+import '../../shared/widgets/metric_card.dart';
 import '../../shared/widgets/section_header.dart';
-import '../accounts/accounts_screen.dart';
+import '../../shared/widgets/transaction_row.dart';
 import '../accounts/account_detail_screen.dart';
+import '../accounts/accounts_screen.dart';
 import '../categories/cubit/categories_cubit.dart';
 import '../categories/cubit/categories_state.dart';
 import '../transactions/transaction_detail_screen.dart';
 import '../transactions/transactions_screen.dart';
-import '../../repositories/account_repository.dart';
 import 'cubit/dashboard_cubit.dart';
 import 'cubit/dashboard_state.dart';
-import '../../data/database.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -70,8 +72,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '\$${state.netWorth.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                        '\$${state.netWorth.toStringAsFixed(2).replaceAllMapped(
+                            RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (
+                            Match m) => "${m[1]},")}',
                         style: AppTextStyles.netWorth,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Raw sum across currencies — no conversion applied',
+                        style: AppTextStyles.muted,
                       ),
                     ],
                   ),
@@ -83,7 +92,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Expanded(
                         child: MetricCard(
                           label: l10n.income,
-                          value: '\$${state.monthlyIncome.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                          value: '\$${state.monthlyIncome
+                              .toStringAsFixed(2)
+                              .replaceAllMapped(
+                              RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (
+                              Match m) => "${m[1]},")}',
                           icon: TablerIcons.arrow_down,
                           isSuccess: true,
                         ),
@@ -92,7 +105,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Expanded(
                         child: MetricCard(
                           label: l10n.expense,
-                          value: '\$${state.monthlyExpense.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                          value: '\$${state.monthlyExpense
+                              .toStringAsFixed(2)
+                              .replaceAllMapped(
+                              RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (
+                              Match m) => "${m[1]},")}',
                           icon: TablerIcons.arrow_up,
                           isSuccess: false,
                         ),
@@ -145,7 +162,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               return ListRow(
                                 leading: Icon(accountIcon, size: 18, color: AppColors.textSecondary),
                                 label: account.name,
-                                value: '\$${balance.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                                subtitle: '${_getAccountTypeLabel(
+                                    account.type, l10n)} · ${account.currency}',
+                                value: CurrencyFormatter.format(
+                                    balance, account.currency),
                                 valueColor: balance < 0 ? AppColors.dangerText : null,
                                 onTap: () {
                                   Navigator.of(context).push(
@@ -188,10 +208,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         return Column(
                           children: List.generate(state.recentTransactions.length, (index) {
                             final tx = state.recentTransactions[index];
-                            
+                            final account = state.topAccounts
+                                .where((a) => a.id == tx.accountId)
+                                .firstOrNull;
+
                             // Get category information
                             final category = allCategories.where((c) => c.id == tx.categoryId).firstOrNull;
-                            final categoryName = category?.name ?? tx.note ?? (tx.type == TransactionType.transfer ? 'Transfer' : (tx.type == TransactionType.income ? 'Income' : 'Expense'));
+                            final categoryName = category?.name ?? tx.note ??
+                                (tx.type == TransactionType.transfer
+                                    ? "Transfer"
+                                    : (tx.type == TransactionType.income
+                                    ? "Income"
+                                    : "Expense"));
                             final categoryIcon = getTablerIcon(category?.icon);
                             final isTransfer = tx.type == TransactionType.transfer;
                             final isIncome = tx.type == TransactionType.income;
@@ -215,8 +243,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             return TransactionRow(
                               icon: categoryIcon,
                               name: categoryName,
-                              timestamp: DateFormat('MMM d').format(tx.date),
-                              amount: tx.amount.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},'),
+                              timestamp: DateFormat("MMM d").format(tx.date),
+                              amount: tx.amount,
+                              currencyCode: account?.currency,
                               isIncome: isIncome,
                               isTransfer: isTransfer,
                               showDivider: index != state.recentTransactions.length - 1,
@@ -243,5 +272,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
         },
       ),
     );
+  }
+
+  String _getAccountTypeLabel(AccountType type, AppLocalizations l10n) {
+    switch (type) {
+      case AccountType.cash:
+        return l10n.cashAccount;
+      case AccountType.bank:
+        return l10n.bankAccount;
+      case AccountType.creditCard:
+        return l10n.creditCardAccount;
+      case AccountType.savings:
+        return l10n.savingsAccount;
+    }
   }
 }

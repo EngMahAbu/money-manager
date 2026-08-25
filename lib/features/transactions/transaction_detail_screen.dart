@@ -8,6 +8,7 @@ import '../../l10n/app_localizations.dart';
 import '../../shared/theme/app_colors.dart';
 import '../../shared/theme/app_text_styles.dart';
 import '../../shared/theme/theme_constants.dart';
+import '../../shared/utils/currency_formatter.dart';
 import '../../shared/utils/icon_mapper.dart';
 import '../accounts/cubit/accounts_cubit.dart';
 import '../accounts/cubit/accounts_state.dart';
@@ -142,7 +143,10 @@ class TransactionDetailScreen extends StatelessWidget {
                         const SizedBox(height: 10),
                         // Amount - no sign, color carries direction
                         Text(
-                          '\$${transaction.amount.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                          fromAccount != null
+                              ? CurrencyFormatter.format(
+                              transaction.amount, fromAccount.currency)
+                              : '\$${transaction.amount.toStringAsFixed(2)}',
                           style: AppTextStyles.netWorth.copyWith(
                             fontSize: 32,
                             color: typeColor,

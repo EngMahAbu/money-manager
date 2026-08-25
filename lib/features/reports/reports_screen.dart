@@ -11,6 +11,7 @@ import '../../shared/theme/app_colors.dart';
 import '../../shared/theme/app_text_styles.dart';
 import '../../shared/theme/theme_constants.dart';
 import '../../shared/utils/category_colors.dart';
+import '../../shared/utils/currency_formatter.dart';
 import '../../shared/widgets/filter_chip.dart';
 import '../accounts/cubit/accounts_cubit.dart';
 import '../accounts/cubit/accounts_state.dart';
@@ -179,7 +180,22 @@ class _ReportsScreenState extends State<ReportsScreen> {
   Widget _buildIncomeVsExpense(ReportsState state, AppLocalizations l10n) {
     final maxValue = _getMaxValue(
         state.monthlyIncomeSeries, state.monthlyExpenseSeries);
-    final currencyFormat = NumberFormat.simpleCurrency(decimalDigits: 0);
+
+    final accountsState = context
+        .read<AccountsCubit>()
+        .state;
+    String? commonCurrency;
+    if (state.accountIds != null && state.accountIds!.length == 1 &&
+        accountsState is AccountsLoaded) {
+      final account = accountsState.activeAccounts
+          .where((a) => a.id == state.accountIds!.first)
+          .firstOrNull;
+      commonCurrency = account?.currency;
+    }
+
+    final currencyFormat = commonCurrency != null
+        ? NumberFormat.simpleCurrency(name: commonCurrency, decimalDigits: 0)
+        : NumberFormat.simpleCurrency(decimalDigits: 0);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -442,6 +458,18 @@ class _ReportsScreenState extends State<ReportsScreen> {
           builder: (context, catState) {
             if (catState is! CategoriesLoaded) return const SizedBox();
 
+            final accountsState = context
+                .read<AccountsCubit>()
+                .state;
+            String? commonCurrency;
+            if (state.accountIds != null && state.accountIds!.length == 1 &&
+                accountsState is AccountsLoaded) {
+              final account = accountsState.activeAccounts
+                  .where((a) => a.id == state.accountIds!.first)
+                  .firstOrNull;
+              commonCurrency = account?.currency;
+            }
+
             final breakdown = _breakdownType == TransactionType.expense
                 ? state.expenseBreakdown
                 : state.incomeBreakdown;
@@ -490,8 +518,16 @@ class _ReportsScreenState extends State<ReportsScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              '\$${total.toStringAsFixed(2).replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]},")}',
-                              style: AppTextStyles.label.copyWith(fontSize: 11, fontWeight: FontWeight.w600),
+                              commonCurrency != null
+                                  ? CurrencyFormatter.format(
+                                  total, commonCurrency)
+                                  : '\$${total
+                                  .toStringAsFixed(2)
+                                  .replaceAllMapped(
+                                  RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (
+                                  Match m) => "${m[1]},")}',
+                              style: AppTextStyles.label.copyWith(
+                                  fontSize: 11, fontWeight: FontWeight.w600),
                             ),
                             Text(l10n.total, style: AppTextStyles.muted.copyWith(fontSize: 8)),
                           ],
@@ -541,7 +577,22 @@ class _ReportsScreenState extends State<ReportsScreen> {
 
   Widget _buildBalanceTrend(ReportsState state, AppLocalizations l10n) {
     if (state.balanceTrend.isEmpty) return const SizedBox();
-    final currencyFormat = NumberFormat.simpleCurrency(decimalDigits: 0);
+
+    final accountsState = context
+        .read<AccountsCubit>()
+        .state;
+    String? commonCurrency;
+    if (state.accountIds != null && state.accountIds!.length == 1 &&
+        accountsState is AccountsLoaded) {
+      final account = accountsState.activeAccounts
+          .where((a) => a.id == state.accountIds!.first)
+          .firstOrNull;
+      commonCurrency = account?.currency;
+    }
+
+    final currencyFormat = commonCurrency != null
+        ? NumberFormat.simpleCurrency(name: commonCurrency, decimalDigits: 0)
+        : NumberFormat.simpleCurrency(decimalDigits: 0);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

@@ -503,7 +503,12 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            '\$$_amountString',
+                            _selectedAccount != null
+                                ? '${NumberFormat
+                                .simpleCurrency(
+                                name: _selectedAccount!.currency)
+                                .currencySymbol}$_amountString'
+                                : '\$$_amountString',
                             style: AppTextStyles.netWorth.copyWith(
                               fontSize: _isCalculatorExpanded ? 32 : 36,
                               color: color,

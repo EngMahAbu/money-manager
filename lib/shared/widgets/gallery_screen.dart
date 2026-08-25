@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
-import 'metric_card.dart';
-import 'list_row.dart';
-import 'transaction_row.dart';
-import 'bottom_nav_bar.dart';
-import 'toggle_switch.dart';
-import 'filter_chip.dart';
-import 'section_header.dart';
+
 import '../theme/app_colors.dart';
+import 'bottom_nav_bar.dart';
+import 'filter_chip.dart';
+import 'list_row.dart';
+import 'metric_card.dart';
+import 'section_header.dart';
+import 'toggle_switch.dart';
+import 'transaction_row.dart';
 
 class ComponentGalleryScreen extends StatefulWidget {
   const ComponentGalleryScreen({super.key});
@@ -85,7 +86,7 @@ class _ComponentGalleryScreenState extends State<ComponentGalleryScreen> {
                     icon: TablerIcons.shopping_cart,
                     name: 'Groceries',
                     timestamp: 'Today, 2:30 PM',
-                    amount: '85.20',
+                    amount: 85.20,
                     isIncome: false,
                     barColor: AppColors.danger,
                     avatarBackgroundColor: AppColors.chartRamp[0].container, // Purple
@@ -96,7 +97,7 @@ class _ComponentGalleryScreenState extends State<ComponentGalleryScreen> {
                     icon: TablerIcons.briefcase,
                     name: 'Salary',
                     timestamp: 'Yesterday',
-                    amount: '3,500.00',
+                    amount: 3500.00,
                     isIncome: true,
                     barColor: AppColors.success,
                     avatarBackgroundColor: AppColors.chartRamp[1].container, // Teal
@@ -107,7 +108,7 @@ class _ComponentGalleryScreenState extends State<ComponentGalleryScreen> {
                     icon: TablerIcons.arrow_right,
                     name: 'Transfer to Savings',
                     timestamp: 'Aug 5',
-                    amount: '500.00',
+                    amount: 500.00,
                     isTransfer: true,
                     showDivider: false,
                     barColor: AppColors.accent,

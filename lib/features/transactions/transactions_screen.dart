@@ -8,6 +8,7 @@ import '../../l10n/app_localizations.dart';
 import '../../shared/theme/app_colors.dart';
 import '../../shared/theme/app_text_styles.dart';
 import '../../shared/utils/category_colors.dart';
+import '../../shared/utils/currency_formatter.dart';
 import '../../shared/utils/icon_mapper.dart';
 import '../../shared/widgets/filter_chip.dart';
 import '../../shared/widgets/transaction_row.dart';
@@ -327,9 +328,31 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
 
     final accountsState = context.read<AccountsCubit>().state;
     final accounts = accountsState is AccountsLoaded ? accountsState.activeAccounts : <Account>[];
+
+    final transactionsState = context
+        .read<TransactionsCubit>()
+        .state;
+    String? commonCurrency;
+    if (transactionsState is TransactionsLoaded &&
+        transactionsState.accountIds != null &&
+        transactionsState.accountIds!.length == 1) {
+      final account = accounts
+          .where((a) => a.id == transactionsState.accountIds!.first)
+          .firstOrNull;
+      commonCurrency = account?.currency;
+    }
+
+    final formattedTotal = commonCurrency != null
+        ? CurrencyFormatter.format(group.total.abs(), commonCurrency)
+        : '\$${group.total.abs().toStringAsFixed(2).replaceAllMapped(
+        RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]},")}';
+
     final categoriesState = context.read<CategoriesCubit>().state;
-    final allCategories = categoriesState is CategoriesLoaded 
-        ? [...categoriesState.incomeCategories, ...categoriesState.expenseCategories] 
+    final allCategories = categoriesState is CategoriesLoaded
+        ? [
+      ...categoriesState.incomeCategories,
+      ...categoriesState.expenseCategories
+    ]
         : <Category>[];
 
     return Column(
@@ -339,9 +362,11 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(dateStr, style: AppTextStyles.label.copyWith(fontWeight: FontWeight.w500)),
+              Text(dateStr,
+                  style: AppTextStyles.label.copyWith(
+                      fontWeight: FontWeight.w500)),
               Text(
-                '${group.total >= 0 ? '+' : '-'}\$${group.total.abs().toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                '${group.total >= 0 ? '+' : '-'}$formattedTotal',
                 style: AppTextStyles.label.copyWith(
                   color: group.total >= 0 ? AppColors.success : AppColors.danger,
                 ),
@@ -383,7 +408,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               name: categoryName,
               highlightQuery: _isSearching ? _searchController.text : null,
               timestamp: accountName,
-              amount: tx.amount.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},'),
+              amount: tx.amount,
+              currencyCode: account?.currency,
               isIncome: isIncome,
               isTransfer: isTransfer,
               showDivider: index < group.transactions.length - 1,

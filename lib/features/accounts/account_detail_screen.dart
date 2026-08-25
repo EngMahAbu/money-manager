@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:intl/intl.dart';
+
 import '../../data/database.dart';
 import '../../l10n/app_localizations.dart';
+import '../../repositories/account_repository.dart';
 import '../../shared/theme/app_colors.dart';
 import '../../shared/theme/app_text_styles.dart';
 import '../../shared/theme/theme_constants.dart';
 import '../../shared/utils/category_colors.dart';
+import '../../shared/utils/currency_formatter.dart';
 import '../../shared/utils/icon_mapper.dart';
 import '../../shared/widgets/metric_card.dart';
-import '../../shared/widgets/transaction_row.dart';
 import '../../shared/widgets/section_header.dart';
+import '../../shared/widgets/transaction_row.dart';
 import '../categories/cubit/categories_cubit.dart';
 import '../categories/cubit/categories_state.dart';
 import '../transactions/cubit/transactions_cubit.dart';
@@ -19,7 +22,6 @@ import '../transactions/cubit/transactions_state.dart';
 import '../transactions/transaction_detail_screen.dart';
 import '../transactions/transactions_screen.dart';
 import 'add_edit_account_screen.dart';
-import '../../repositories/account_repository.dart';
 
 class AccountDetailScreen extends StatefulWidget {
   final Account account;
@@ -114,12 +116,18 @@ class _AccountDetailScreenState extends State<AccountDetailScreen> {
                         children: [
                           Icon(_getAccountIcon(widget.account.type), size: 14, color: AppColors.textSecondary),
                           const SizedBox(width: 8),
-                          Text(_getAccountTypeLabel(widget.account.type, l10n), style: AppTextStyles.label),
+                          Text(
+                            '${_getAccountTypeLabel(
+                                widget.account.type, l10n)} · ${widget.account
+                                .currency}',
+                            style: AppTextStyles.label,
+                          ),
                         ],
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '\$${balance.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                        CurrencyFormatter.format(
+                            balance, widget.account.currency),
                         style: AppTextStyles.netWorth,
                       ),
                     ],
@@ -146,16 +154,18 @@ class _AccountDetailScreenState extends State<AccountDetailScreen> {
                     Expanded(
                       child: MetricCard(
                         label: 'This month',
-                        value: '+\$${monthlyIncome.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                        value: '+${CurrencyFormatter.format(
+                            monthlyIncome, widget.account.currency)}',
                         icon: TablerIcons.arrow_down,
                         isSuccess: true,
                       ),
                     ),
-                    SizedBox(width: 12),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: MetricCard(
                         label: 'This month',
-                        value: '-\$${monthlyExpense.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                        value: '-${CurrencyFormatter.format(
+                            monthlyExpense, widget.account.currency)}',
                         icon: TablerIcons.arrow_up,
                         isSuccess: false,
                       ),
@@ -257,7 +267,8 @@ class _AccountDetailScreenState extends State<AccountDetailScreen> {
               icon: categoryIcon,
               name: categoryName,
               timestamp: dateStr,
-              amount: tx.amount.toStringAsFixed(2),
+              amount: tx.amount,
+              currencyCode: widget.account.currency,
               isIncome: isIncome,
               isTransfer: isTransfer,
               showDivider: index < group.transactions.length - 1,

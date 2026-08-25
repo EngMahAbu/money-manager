@@ -1,0 +1,51 @@
+<div style="background: var(--surface-1); border-radius: 12px; padding: 1.5rem 0.75rem; max-width: 380px; margin: 0 auto;">
+    <h2 class="sr-only">Category breakdown card with Expense selected in the toggle, showing the
+        expense donut chart and legend</h2>
+    <div style="background: var(--surface-2); border-radius: 16px; border: 0.5px solid var(--border); padding: 1.25rem;">
+
+        <p style="font-size: 14px; font-weight: 500; margin: 0 0 12px;">By category</p>
+
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 6px; margin-bottom: 1.25rem; background: var(--surface-1); border-radius: var(--radius); padding: 4px;">
+            <div style="text-align: center; padding: 8px 0; border-radius: 6px; background: var(--bg-danger); color: var(--text-danger); font-size: 13px; font-weight: 500;">
+                Expense
+            </div>
+            <div style="text-align: center; padding: 8px 0; border-radius: 6px; color: var(--text-secondary); font-size: 13px;">
+                Income
+            </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <svg style="width: 100px; height: 100px; flex-shrink: 0;" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" fill="none" r="35" stroke="#E77A5D" stroke-dasharray="66 154"
+                        stroke-width="16" transform="rotate(-90 50 50)"/>
+                <circle cx="50" cy="50" fill="none" r="35" stroke="#2FA88C" stroke-dasharray="44 176"
+                        stroke-dashoffset="-66" stroke-width="16"
+                        transform="rotate(-90 50 50)"/>
+                <circle cx="50" cy="50" fill="none" r="35" stroke="#8B7FD9" stroke-dasharray="77 143"
+                        stroke-dashoffset="-110" stroke-width="16"
+                        transform="rotate(-90 50 50)"/>
+                <text fill="var(--text-primary)" font-size="11" font-weight="500" text-anchor="middle" x="50"
+                      y="47">$1,940
+                </text>
+                <text fill="var(--text-muted)" font-size="8" text-anchor="middle" x="50" y="60">
+                    total
+                </text>
+            </svg>
+            <div style="display: flex; flex-direction: column; gap: 8px; flex: 1;">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <span style="display: flex; align-items: center; gap: 6px; font-size: 12px;"><span
+                            style="width: 8px; height: 8px; border-radius: 2px; background: #8B7FD9;"></span>Rent</span><span
+                        style="font-size: 12px; color: var(--text-secondary);">40%</span></div>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <span style="display: flex; align-items: center; gap: 6px; font-size: 12px;"><span
+                            style="width: 8px; height: 8px; border-radius: 2px; background: #E77A5D;"></span>Groceries</span><span
+                        style="font-size: 12px; color: var(--text-secondary);">34%</span></div>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <span style="display: flex; align-items: center; gap: 6px; font-size: 12px;"><span
+                            style="width: 8px; height: 8px; border-radius: 2px; background: #2FA88C;"></span>Utilities</span><span
+                        style="font-size: 12px; color: var(--text-secondary);">26%</span></div>
+            </div>
+        </div>
+
+    </div>
+</div>

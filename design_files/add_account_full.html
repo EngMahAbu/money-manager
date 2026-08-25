@@ -1,0 +1,66 @@
+<div style="background: var(--surface-1); border-radius: 12px; padding: 1.5rem 0.75rem; max-width: 380px; margin: 0 auto;">
+    <h2 class="sr-only">Full add account screen with fields for name, type, currency, starting
+        balance, and icon and color selection</h2>
+    <div style="background: var(--surface-2); border-radius: 16px; border: 0.5px solid var(--border); padding: 1.25rem;">
+
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+            <i aria-hidden="true" class="ti ti-x"
+               style="font-size:20px; color: var(--text-secondary);"></i>
+            <p style="font-size: 14px; font-weight: 500; margin: 0;">Add account</p>
+            <i aria-hidden="true" class="ti ti-check"
+               style="font-size:20px; color: var(--text-accent);"></i>
+        </div>
+
+        <p style="font-size: 13px; color: var(--text-secondary); margin: 0 0 6px;">Name</p>
+        <input placeholder="e.g. Main bank" style="width: 100%; margin-bottom: 1.1rem;"
+               type="text"/>
+
+        <p style="font-size: 13px; color: var(--text-secondary); margin: 0 0 6px;">Type</p>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; margin-bottom: 1.1rem;">
+            <div style="text-align:center; padding: 10px 0; background: var(--surface-1); color: var(--text-secondary); border-radius: var(--radius); font-size: 13px;">
+                Cash
+            </div>
+            <div style="text-align:center; padding: 10px 0; background: var(--bg-accent); color: var(--text-accent); border-radius: var(--radius); font-size: 13px; font-weight: 500;">
+                Bank
+            </div>
+            <div style="text-align:center; padding: 10px 0; background: var(--surface-1); color: var(--text-secondary); border-radius: var(--radius); font-size: 13px;">
+                Credit card
+            </div>
+            <div style="text-align:center; padding: 10px 0; background: var(--surface-1); color: var(--text-secondary); border-radius: var(--radius); font-size: 13px;">
+                Savings
+            </div>
+        </div>
+
+        <p style="font-size: 13px; color: var(--text-secondary); margin: 0 0 6px;">Currency</p>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: var(--surface-1); border-radius: var(--radius); margin-bottom: 1.1rem;">
+            <span style="font-size: 14px;">USD — US dollar</span>
+            <i aria-hidden="true" class="ti ti-chevron-right"
+               style="font-size:16px; color: var(--text-muted);"></i>
+        </div>
+
+        <p style="font-size: 13px; color: var(--text-secondary); margin: 0 0 6px;">Starting
+            balance</p>
+        <input placeholder="0.00" style="width: 100%; margin-bottom: 1.1rem;" type="text"/>
+
+        <p style="font-size: 13px; color: var(--text-secondary); margin: 0 0 8px;">Icon and
+            color</p>
+        <div style="display: flex; gap: 10px;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--fill-accent); display: flex; align-items: center; justify-content: center; border: 2px solid var(--text-accent);">
+                <i aria-hidden="true" class="ti ti-building-bank"
+                   style="font-size:18px; color: var(--on-accent);"></i></div>
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--surface-1); display: flex; align-items: center; justify-content: center;">
+                <i aria-hidden="true" class="ti ti-wallet"
+                   style="font-size:18px; color: var(--text-secondary);"></i></div>
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--surface-1); display: flex; align-items: center; justify-content: center;">
+                <i aria-hidden="true" class="ti ti-credit-card"
+                   style="font-size:18px; color: var(--text-secondary);"></i></div>
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--surface-1); display: flex; align-items: center; justify-content: center;">
+                <i aria-hidden="true" class="ti ti-piggy-bank"
+                   style="font-size:18px; color: var(--text-secondary);"></i></div>
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--surface-1); border: 1px dashed var(--border-strong); display: flex; align-items: center; justify-content: center;">
+                <i aria-hidden="true" class="ti ti-plus"
+                   style="font-size:18px; color: var(--text-muted);"></i></div>
+        </div>
+
+    </div>
+</div>

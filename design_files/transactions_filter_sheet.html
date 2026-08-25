@@ -1,0 +1,68 @@
+<div style="min-height: 400px; background: rgba(0,0,0,0.45); display: flex; align-items: flex-end; justify-content: center; border-radius: 12px; padding: 1rem 0;">
+    <h2 class="sr-only">Full filter sheet with sections for date range, transaction type, accounts,
+        and categories, plus reset and apply buttons</h2>
+    <div style="background: var(--surface-2); border-radius: 20px 20px 0 0; padding: 1.25rem; width: 380px; max-width: 100%;">
+
+        <div style="width: 36px; height: 4px; background: var(--border-strong); border-radius: 2px; margin: 0 auto 1rem;"></div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+            <p style="font-size: 16px; font-weight: 500; margin: 0;">Filters</p>
+            <span style="font-size: 13px; color: var(--text-accent);">Reset</span>
+        </div>
+
+        <p style="font-size: 12px; font-weight: 500; color: var(--text-secondary); margin: 0 0 8px;">
+            Date range</p>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--surface-1); border-radius: var(--radius); margin-bottom: 1rem;">
+            <span style="font-size: 13px;">Aug 1 – Aug 9, 2026</span>
+            <i aria-hidden="true" class="ti ti-chevron-right"
+               style="font-size:14px; color: var(--text-muted);"></i>
+        </div>
+
+        <p style="font-size: 12px; font-weight: 500; color: var(--text-secondary); margin: 0 0 8px;">
+            Type</p>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; margin-bottom: 1rem;">
+            <div style="text-align:center; padding: 8px 0; background: var(--bg-danger); color: var(--text-danger); border-radius: var(--radius); font-size: 13px; font-weight: 500;">
+                Expense
+            </div>
+            <div style="text-align:center; padding: 8px 0; background: var(--bg-success); color: var(--text-success); border-radius: var(--radius); font-size: 13px; font-weight: 500;">
+                Income
+            </div>
+        </div>
+
+        <p style="font-size: 12px; font-weight: 500; color: var(--text-secondary); margin: 0 0 8px;">
+            Accounts</p>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem;">
+            <div style="padding: 6px 12px; background: var(--bg-accent); color: var(--text-accent); border-radius: 20px; font-size: 12px;">
+                Main bank ✓
+            </div>
+            <div style="padding: 6px 12px; background: var(--surface-1); color: var(--text-secondary); border-radius: 20px; font-size: 12px;">
+                Cash
+            </div>
+            <div style="padding: 6px 12px; background: var(--surface-1); color: var(--text-secondary); border-radius: 20px; font-size: 12px;">
+                Visa card
+            </div>
+        </div>
+
+        <p style="font-size: 12px; font-weight: 500; color: var(--text-secondary); margin: 0 0 8px;">
+            Categories</p>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.25rem;">
+            <div style="padding: 6px 12px; background: var(--bg-accent); color: var(--text-accent); border-radius: 20px; font-size: 12px;">
+                Groceries ✓
+            </div>
+            <div style="padding: 6px 12px; background: var(--surface-1); color: var(--text-secondary); border-radius: 20px; font-size: 12px;">
+                Utilities
+            </div>
+            <div style="padding: 6px 12px; background: var(--surface-1); color: var(--text-secondary); border-radius: 20px; font-size: 12px;">
+                Transport
+            </div>
+            <div style="padding: 6px 12px; background: var(--surface-1); color: var(--text-secondary); border-radius: 20px; font-size: 12px;">
+                Entertainment
+            </div>
+        </div>
+
+        <button style="width: 100%; padding: 12px; background: var(--fill-primary); color: var(--on-primary); border-radius: var(--radius); font-size: 14px; font-weight: 500; border: none;">
+            Apply filters
+        </button>
+
+    </div>
+</div>

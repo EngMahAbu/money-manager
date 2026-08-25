@@ -1,0 +1,126 @@
+<div style="background: var(--surface-1); border-radius: 12px; padding: 1.5rem 0.75rem; max-width: 380px; margin: 0 auto;">
+    <h2 class="sr-only">Full add transaction screen with the calculator expanded, showing a running
+        expression preview and a four column keypad with operators</h2>
+    <div style="background: var(--surface-2); border-radius: 16px; border: 0.5px solid var(--border); padding: 1.25rem;">
+
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+            <i aria-hidden="true" class="ti ti-x"
+               style="font-size:20px; color: var(--text-secondary);"></i>
+            <p style="font-size: 14px; font-weight: 500; margin: 0;">New transaction</p>
+            <i aria-hidden="true" class="ti ti-check"
+               style="font-size:20px; color: var(--text-accent);"></i>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 6px; margin-bottom: 1.25rem; background: var(--surface-1); border-radius: var(--radius); padding: 4px;">
+            <div style="text-align: center; padding: 8px 0; border-radius: 6px; background: var(--bg-danger); color: var(--text-danger); font-size: 13px; font-weight: 500;">
+                Expense
+            </div>
+            <div style="text-align: center; padding: 8px 0; border-radius: 6px; color: var(--text-secondary); font-size: 13px;">
+                Income
+            </div>
+            <div style="text-align: center; padding: 8px 0; border-radius: 6px; color: var(--text-secondary); font-size: 13px;">
+                Transfer
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 1rem;">
+            <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 2px;">12.50 + 8.30 +
+                4.20</p>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <span style="font-size: 32px; font-weight: 500; color: var(--text-danger);">$25.00</span>
+                <i aria-hidden="true" class="ti ti-calculator"
+                   style="font-size:18px; color: var(--text-accent);"></i>
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 1rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: var(--surface-1); border-radius: var(--radius);">
+                <div style="display: flex; align-items: center; gap: 10px;"><i aria-hidden="true"
+                                                                               class="ti ti-wallet"
+                                                                               style="font-size:16px; color: var(--text-secondary);"></i><span
+                        style="font-size: 13px; color: var(--text-secondary);">Account</span></div>
+                <div style="display: flex; align-items: center; gap: 6px;"><span
+                        style="font-size: 13px;">Main bank</span><i aria-hidden="true"
+                                                                    class="ti ti-chevron-right"
+                                                                    style="font-size:14px; color: var(--text-muted);"></i></div>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: var(--surface-1); border-radius: var(--radius);">
+                <div style="display: flex; align-items: center; gap: 10px;"><i
+                        aria-hidden="true" class="ti ti-category"
+                        style="font-size:16px; color: var(--text-secondary);"></i><span
+                        style="font-size: 13px; color: var(--text-secondary);">Category</span></div>
+                <div style="display: flex; align-items: center; gap: 6px;"><span
+                        style="font-size: 13px;">Groceries</span><i aria-hidden="true"
+                                                                    class="ti ti-chevron-right"
+                                                                    style="font-size:14px; color: var(--text-muted);"></i></div>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: var(--surface-1); border-radius: var(--radius);">
+                <div style="display: flex; align-items: center; gap: 10px;"><i
+                        aria-hidden="true" class="ti ti-calendar"
+                        style="font-size:16px; color: var(--text-secondary);"></i><span
+                        style="font-size: 13px; color: var(--text-secondary);">Date</span></div>
+                <div style="display: flex; align-items: center; gap: 6px;"><span
+                        style="font-size: 13px;">Today</span><i aria-hidden="true"
+                                                                class="ti ti-chevron-right"
+                                                                style="font-size:14px; color: var(--text-muted);"></i></div>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: var(--surface-1); border-radius: var(--radius);">
+                <div style="display: flex; align-items: center; gap: 10px;"><i aria-hidden="true"
+                                                                               class="ti ti-note"
+                                                                               style="font-size:16px; color: var(--text-secondary);"></i><span
+                        style="font-size: 13px; color: var(--text-muted);">Add a note</span></div>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 6px;">
+            <div style="text-align: center; padding: 11px 0; background: var(--surface-1); border-radius: var(--radius); font-size: 16px;">
+                1
+            </div>
+            <div style="text-align: center; padding: 11px 0; background: var(--surface-1); border-radius: var(--radius); font-size: 16px;">
+                2
+            </div>
+            <div style="text-align: center; padding: 11px 0; background: var(--surface-1); border-radius: var(--radius); font-size: 16px;">
+                3
+            </div>
+            <div style="text-align: center; padding: 11px 0; background: var(--bg-accent); color: var(--text-accent); border-radius: var(--radius); font-size: 16px;">
+                ÷
+            </div>
+            <div style="text-align: center; padding: 11px 0; background: var(--surface-1); border-radius: var(--radius); font-size: 16px;">
+                4
+            </div>
+            <div style="text-align: center; padding: 11px 0; background: var(--surface-1); border-radius: var(--radius); font-size: 16px;">
+                5
+            </div>
+            <div style="text-align: center; padding: 11px 0; background: var(--surface-1); border-radius: var(--radius); font-size: 16px;">
+                6
+            </div>
+            <div style="text-align: center; padding: 11px 0; background: var(--bg-accent); color: var(--text-accent); border-radius: var(--radius); font-size: 16px;">
+                ×
+            </div>
+            <div style="text-align: center; padding: 11px 0; background: var(--surface-1); border-radius: var(--radius); font-size: 16px;">
+                7
+            </div>
+            <div style="text-align: center; padding: 11px 0; background: var(--surface-1); border-radius: var(--radius); font-size: 16px;">
+                8
+            </div>
+            <div style="text-align: center; padding: 11px 0; background: var(--surface-1); border-radius: var(--radius); font-size: 16px;">
+                9
+            </div>
+            <div style="text-align: center; padding: 11px 0; background: var(--bg-accent); color: var(--text-accent); border-radius: var(--radius); font-size: 16px;">
+                −
+            </div>
+            <div style="text-align: center; padding: 11px 0; background: var(--surface-1); border-radius: var(--radius); font-size: 16px;">
+                .
+            </div>
+            <div style="text-align: center; padding: 11px 0; background: var(--surface-1); border-radius: var(--radius); font-size: 16px;">
+                0
+            </div>
+            <div style="text-align: center; padding: 11px 0; background: var(--surface-1); border-radius: var(--radius);">
+                <i aria-hidden="true" class="ti ti-backspace" style="font-size:16px;"></i></div>
+            <div style="text-align: center; padding: 11px 0; background: var(--bg-accent); color: var(--text-accent); border-radius: var(--radius); font-size: 16px;">
+                +
+            </div>
+        </div>
+
+    </div>
+</div>

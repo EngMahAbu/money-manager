@@ -1,0 +1,56 @@
+<div style="min-height: 400px; background: rgba(0,0,0,0.45); display: flex; align-items: flex-end; justify-content: center; border-radius: 12px; padding: 1rem 0;">
+    <h2 class="sr-only">Category picker bottom sheet with a search field and a list of expense
+        categories, each with a colored icon and a selected checkmark</h2>
+    <div style="background: var(--surface-2); border-radius: 20px 20px 0 0; padding: 1.25rem; width: 380px; max-width: 100%;">
+
+        <div style="width: 36px; height: 4px; background: var(--border-strong); border-radius: 2px; margin: 0 auto 1rem;"></div>
+
+        <p style="font-size: 16px; font-weight: 500; margin: 0 0 12px;">Choose category</p>
+
+        <input placeholder="Search categories" style="width: 100%; margin-bottom: 12px;"
+               type="text"/>
+
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--bg-danger); border-radius: var(--radius);">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--surface-2); display: flex; align-items: center; justify-content: center;">
+                        <i aria-hidden="true"
+                           class="ti ti-shopping-cart"
+                           style="font-size:16px; color: var(--text-danger);"></i></div>
+                    <span style="font-size: 14px; color: var(--text-danger); font-weight: 500;">Groceries</span>
+                </div>
+                <i aria-hidden="true" class="ti ti-check"
+                   style="font-size:16px; color: var(--text-danger);"></i>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: var(--surface-1); border-radius: var(--radius);">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--surface-2); display: flex; align-items: center; justify-content: center;">
+                    <i aria-hidden="true" class="ti ti-bolt"
+                       style="font-size:16px; color: var(--text-secondary);"></i></div>
+                <span style="font-size: 14px;">Utilities</span>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: var(--surface-1); border-radius: var(--radius);">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--surface-2); display: flex; align-items: center; justify-content: center;">
+                    <i aria-hidden="true" class="ti ti-car"
+                       style="font-size:16px; color: var(--text-secondary);"></i></div>
+                <span style="font-size: 14px;">Transport</span>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: var(--surface-1); border-radius: var(--radius);">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--surface-2); display: flex; align-items: center; justify-content: center;">
+                    <i aria-hidden="true" class="ti ti-movie"
+                       style="font-size:16px; color: var(--text-secondary);"></i></div>
+                <span style="font-size: 14px;">Entertainment</span>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-top: 0.5px solid var(--border); margin-top: 4px;">
+                <i aria-hidden="true" class="ti ti-plus"
+                   style="font-size:18px; color: var(--text-accent);"></i>
+                <span style="font-size: 14px; color: var(--text-accent);">Add category</span>
+            </div>
+
+        </div>
+    </div>
+</div>

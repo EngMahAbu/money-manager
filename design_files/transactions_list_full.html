@@ -1,0 +1,114 @@
+<div style="background: var(--surface-1); border-radius: 12px; padding: 1.5rem 0.75rem; max-width: 380px; margin: 0 auto;">
+    <h2 class="sr-only">Full transactions list screen with search and filter icons, filter chips for
+        date, account, and category, grouped transaction rows by date with daily subtotals, and
+        bottom navigation</h2>
+    <div style="background: var(--surface-2); border-radius: 16px; border: 0.5px solid var(--border); padding: 1.25rem;">
+
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+            <p style="font-size: 18px; font-weight: 500; margin: 0;">Transactions</p>
+            <div style="display: flex; gap: 14px;">
+                <i aria-hidden="true" class="ti ti-search"
+                   style="font-size:20px; color: var(--text-secondary);"></i>
+                <i aria-hidden="true"
+                   class="ti ti-adjustments-horizontal" style="font-size:20px; color: var(--text-secondary);"></i>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-bottom: 1.25rem; overflow-x: auto;">
+            <div style="display:flex; align-items:center; gap:4px; padding: 6px 12px; background: var(--surface-1); border-radius: 20px; white-space: nowrap;">
+                <span style="font-size: 12px; color: var(--text-secondary);">This month</span><i
+                    aria-hidden="true" class="ti ti-chevron-down"
+                    style="font-size:12px; color: var(--text-muted);"></i></div>
+            <div style="display:flex; align-items:center; gap:4px; padding: 6px 12px; background: var(--surface-1); border-radius: 20px; white-space: nowrap;">
+                <span style="font-size: 12px; color: var(--text-secondary);">All accounts</span><i
+                    aria-hidden="true" class="ti ti-chevron-down"
+                    style="font-size:12px; color: var(--text-muted);"></i></div>
+            <div style="display:flex; align-items:center; gap:4px; padding: 6px 12px; background: var(--surface-1); border-radius: 20px; white-space: nowrap;">
+                <span style="font-size: 12px; color: var(--text-secondary);">Category</span><i
+                    aria-hidden="true" class="ti ti-chevron-down"
+                    style="font-size:12px; color: var(--text-muted);"></i></div>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                <span style="font-size: 12px; font-weight: 500; color: var(--text-secondary);">Today</span>
+                <span style="font-size: 12px; color: var(--text-danger);">-$64</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 0.5px solid var(--border);">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--bg-danger); display: flex; align-items: center; justify-content: center;">
+                        <i aria-hidden="true"
+                           class="ti ti-shopping-cart"
+                           style="font-size:16px; color: var(--text-danger);"></i></div>
+                    <div><p style="font-size: 14px; margin: 0;">Groceries</p>
+                        <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Main
+                            bank</p></div>
+                </div>
+                <span style="font-size: 14px; font-weight: 500; color: var(--text-danger);">-$64</span>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                <span style="font-size: 12px; font-weight: 500; color: var(--text-secondary);">Yesterday</span>
+                <span style="font-size: 12px; color: var(--text-success);">+$3,150</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 0.5px solid var(--border);">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--bg-success); display: flex; align-items: center; justify-content: center;">
+                        <i aria-hidden="true"
+                           class="ti ti-briefcase"
+                           style="font-size:16px; color: var(--text-success);"></i></div>
+                    <div><p style="font-size: 14px; margin: 0;">Salary</p>
+                        <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Main
+                            bank</p></div>
+                </div>
+                <span style="font-size: 14px; font-weight: 500; color: var(--text-success);">+$3,200</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 0;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--bg-danger); display: flex; align-items: center; justify-content: center;">
+                        <i aria-hidden="true" class="ti ti-movie"
+                           style="font-size:16px; color: var(--text-danger);"></i></div>
+                    <div><p style="font-size: 14px; margin: 0;">Entertainment</p>
+                        <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Cash</p>
+                    </div>
+                </div>
+                <span style="font-size: 14px; font-weight: 500; color: var(--text-danger);">-$50</span>
+            </div>
+        </div>
+
+        <div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                <span style="font-size: 12px; font-weight: 500; color: var(--text-secondary);">Aug 5</span>
+                <span style="font-size: 12px; color: var(--text-danger);">-$18</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 0;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--bg-danger); display: flex; align-items: center; justify-content: center;">
+                        <i aria-hidden="true" class="ti ti-bolt"
+                           style="font-size:16px; color: var(--text-danger);"></i></div>
+                    <div><p style="font-size: 14px; margin: 0;">Utilities</p>
+                        <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Main
+                            bank</p></div>
+                </div>
+                <span style="font-size: 14px; font-weight: 500; color: var(--text-danger);">-$18</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="display: flex; justify-content: space-around; align-items: center; margin-top: 1rem; padding-top: 0.75rem;">
+        <i aria-hidden="true" class="ti ti-home"
+           style="font-size:22px; color: var(--text-muted);"></i>
+        <i aria-hidden="true" class="ti ti-list"
+           style="font-size:22px; color: var(--text-accent);"></i>
+        <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--fill-primary); display: flex; align-items: center; justify-content: center;">
+            <i aria-hidden="true" class="ti ti-plus"
+               style="font-size:22px; color: var(--on-primary);"></i></div>
+        <i aria-hidden="true" class="ti ti-chart-pie"
+           style="font-size:22px; color: var(--text-muted);"></i>
+        <i aria-hidden="true" class="ti ti-settings"
+           style="font-size:22px; color: var(--text-muted);"></i>
+    </div>
+</div>

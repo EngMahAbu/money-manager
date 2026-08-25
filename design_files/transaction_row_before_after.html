@@ -1,0 +1,105 @@
+<div style="background: var(--surface-1); border-radius: 12px; padding: 1.5rem 0.75rem; max-width: 380px; margin: 0 auto;">
+    <h2 class="sr-only">Comparison of transaction list rows before and after, showing how
+        category-specific icon colors plus a type-colored vertical bar distinguish transactions
+        better than uniform red or green badges</h2>
+    <div style="display: flex; gap: 12px;">
+
+        <div style="flex: 1; background: var(--surface-2); border-radius: 16px; border: 0.5px solid var(--border); padding: 1rem;">
+            <p style="font-size: 12px; font-weight: 500; color: var(--text-secondary); margin: 0 0 10px; text-align:center;">
+                Before</p>
+            <div style="display: flex; flex-direction: column;">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 0.5px solid var(--border);">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--bg-danger); display: flex; align-items: center; justify-content: center;">
+                            <i aria-hidden="true"
+                               class="ti ti-shopping-cart"
+                               style="font-size:13px; color: var(--text-danger);"></i></div>
+                        <span style="font-size: 12px;">Groceries</span></div>
+                    <span style="font-size: 12px; color: var(--text-danger);">$64.50</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 0.5px solid var(--border);">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--bg-danger); display: flex; align-items: center; justify-content: center;">
+                            <i aria-hidden="true" class="ti ti-home"
+                               style="font-size:13px; color: var(--text-danger);"></i></div>
+                        <span style="font-size: 12px;">Rent</span></div>
+                    <span style="font-size: 12px; color: var(--text-danger);">$1,200</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 0.5px solid var(--border);">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--bg-danger); display: flex; align-items: center; justify-content: center;">
+                            <i aria-hidden="true" class="ti ti-bolt"
+                               style="font-size:13px; color: var(--text-danger);"></i></div>
+                        <span style="font-size: 12px;">Utilities</span></div>
+                    <span style="font-size: 12px; color: var(--text-danger);">$88.20</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 0;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--bg-success); display: flex; align-items: center; justify-content: center;">
+                            <i aria-hidden="true"
+                               class="ti ti-briefcase"
+                               style="font-size:13px; color: var(--text-success);"></i></div>
+                        <span style="font-size: 12px;">Salary</span></div>
+                    <span style="font-size: 12px; color: var(--text-success);">$3,000</span>
+                </div>
+            </div>
+            <p style="font-size: 10px; color: var(--text-muted); margin: 10px 0 0; text-align:center;">
+                3 red badges look nearly identical</p>
+        </div>
+
+        <div style="flex: 1; background: var(--surface-2); border-radius: 16px; border: 0.5px solid var(--border); padding: 1rem;">
+            <p style="font-size: 12px; font-weight: 500; color: var(--text-secondary); margin: 0 0 10px; text-align:center;">
+                After</p>
+            <div style="display: flex; flex-direction: column;">
+                <div style="display: flex; align-items: stretch; gap: 8px; padding: 8px 0; border-bottom: 0.5px solid var(--border);">
+                    <div style="width: 3px; background: var(--fill-danger); border-radius: 2px;"></div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="width: 28px; height: 28px; border-radius: 50%; background: #FAECE7; display: flex; align-items: center; justify-content: center;">
+                                <i aria-hidden="true"
+                                   class="ti ti-shopping-cart" style="font-size:13px; color: #712B13;"></i>
+                            </div>
+                            <span style="font-size: 12px;">Groceries</span></div>
+                        <span style="font-size: 12px; color: var(--text-danger);">$64.50</span>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: stretch; gap: 8px; padding: 8px 0; border-bottom: 0.5px solid var(--border);">
+                    <div style="width: 3px; background: var(--fill-danger); border-radius: 2px;"></div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="width: 28px; height: 28px; border-radius: 50%; background: #EEEDFE; display: flex; align-items: center; justify-content: center;">
+                                <i aria-hidden="true" class="ti ti-home"
+                                   style="font-size:13px; color: #3C3489;"></i></div>
+                            <span style="font-size: 12px;">Rent</span></div>
+                        <span style="font-size: 12px; color: var(--text-danger);">$1,200</span>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: stretch; gap: 8px; padding: 8px 0; border-bottom: 0.5px solid var(--border);">
+                    <div style="width: 3px; background: var(--fill-danger); border-radius: 2px;"></div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="width: 28px; height: 28px; border-radius: 50%; background: #E1F5EE; display: flex; align-items: center; justify-content: center;">
+                                <i aria-hidden="true" class="ti ti-bolt"
+                                   style="font-size:13px; color: #085041;"></i></div>
+                            <span style="font-size: 12px;">Utilities</span></div>
+                        <span style="font-size: 12px; color: var(--text-danger);">$88.20</span>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: stretch; gap: 8px; padding: 8px 0;">
+                    <div style="width: 3px; background: var(--fill-success); border-radius: 2px;"></div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="width: 28px; height: 28px; border-radius: 50%; background: #FBEAF0; display: flex; align-items: center; justify-content: center;">
+                                <i aria-hidden="true" class="ti ti-briefcase"
+                                   style="font-size:13px; color: #72243E;"></i></div>
+                            <span style="font-size: 12px;">Salary</span></div>
+                        <span style="font-size: 12px; color: var(--text-success);">$3,000</span>
+                    </div>
+                </div>
+            </div>
+            <p style="font-size: 10px; color: var(--text-muted); margin: 10px 0 0; text-align:center;">
+                bar = direction, badge = category</p>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,125 @@
+<div style="background: var(--surface-1); border-radius: 12px; padding: 1.5rem 0.75rem; max-width: 380px; margin: 0 auto;">
+    <h2 class="sr-only">Full add transaction screen in income mode with green segmented control,
+        amount, account, category, date, note, receipts, and keypad</h2>
+    <div style="background: var(--surface-2); border-radius: 16px; border: 0.5px solid var(--border); padding: 1.25rem;">
+
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+            <i aria-hidden="true" class="ti ti-x"
+               style="font-size:20px; color: var(--text-secondary);"></i>
+            <p style="font-size: 14px; font-weight: 500; margin: 0;">New transaction</p>
+            <i aria-hidden="true" class="ti ti-check"
+               style="font-size:20px; color: var(--text-accent);"></i>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 6px; margin-bottom: 1.25rem; background: var(--surface-1); border-radius: var(--radius); padding: 4px;">
+            <div style="text-align: center; padding: 8px 0; border-radius: 6px; color: var(--text-secondary); font-size: 13px;">
+                Expense
+            </div>
+            <div style="text-align: center; padding: 8px 0; border-radius: 6px; background: var(--bg-success); color: var(--text-success); font-size: 13px; font-weight: 500;">
+                Income
+            </div>
+            <div style="text-align: center; padding: 8px 0; border-radius: 6px; color: var(--text-secondary); font-size: 13px;">
+                Transfer
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 1.25rem;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <span style="font-size: 36px; font-weight: 500; color: var(--text-success);">$3,200</span>
+                <i aria-hidden="true" class="ti ti-calculator"
+                   style="font-size:18px; color: var(--text-muted);"></i>
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 1.25rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: var(--surface-1); border-radius: var(--radius);">
+                <div style="display: flex; align-items: center; gap: 10px;"><i aria-hidden="true"
+                                                                               class="ti ti-wallet"
+                                                                               style="font-size:18px; color: var(--text-secondary);"></i><span
+                        style="font-size: 14px; color: var(--text-secondary);">Account</span></div>
+                <div style="display: flex; align-items: center; gap: 6px;"><span
+                        style="font-size: 14px;">Main bank</span><i aria-hidden="true"
+                                                                    class="ti ti-chevron-right"
+                                                                    style="font-size:16px; color: var(--text-muted);"></i></div>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: var(--surface-1); border-radius: var(--radius);">
+                <div style="display: flex; align-items: center; gap: 10px;"><i
+                        aria-hidden="true" class="ti ti-category"
+                        style="font-size:18px; color: var(--text-secondary);"></i><span
+                        style="font-size: 14px; color: var(--text-secondary);">Category</span></div>
+                <div style="display: flex; align-items: center; gap: 6px;"><span
+                        style="font-size: 14px;">Salary</span><i aria-hidden="true"
+                                                                 class="ti ti-chevron-right"
+                                                                 style="font-size:16px; color: var(--text-muted);"></i></div>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: var(--surface-1); border-radius: var(--radius);">
+                <div style="display: flex; align-items: center; gap: 10px;"><i
+                        aria-hidden="true" class="ti ti-calendar"
+                        style="font-size:18px; color: var(--text-secondary);"></i><span
+                        style="font-size: 14px; color: var(--text-secondary);">Date</span></div>
+                <div style="display: flex; align-items: center; gap: 6px;"><span
+                        style="font-size: 14px;">Today</span><i aria-hidden="true"
+                                                                class="ti ti-chevron-right"
+                                                                style="font-size:16px; color: var(--text-muted);"></i></div>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: var(--surface-1); border-radius: var(--radius);">
+                <div style="display: flex; align-items: center; gap: 10px;"><i aria-hidden="true"
+                                                                               class="ti ti-note"
+                                                                               style="font-size:18px; color: var(--text-secondary);"></i><span
+                        style="font-size: 14px; color: var(--text-muted);">Add a note</span></div>
+            </div>
+            <div style="padding: 10px 12px; background: var(--surface-1); border-radius: var(--radius);">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <i aria-hidden="true" class="ti ti-receipt"
+                       style="font-size:16px; color: var(--text-secondary);"></i>
+                    <span style="font-size: 13px; color: var(--text-secondary);">Receipts</span>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <div style="width: 48px; height: 48px; border-radius: 6px; background: var(--surface-2); border: 0.5px dashed var(--border-strong); display: flex; align-items: center; justify-content: center;">
+                        <i aria-hidden="true" class="ti ti-plus"
+                           style="font-size:18px; color: var(--text-muted);"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px;">
+            <div style="text-align: center; padding: 13px 0; background: var(--surface-1); border-radius: var(--radius); font-size: 18px;">
+                1
+            </div>
+            <div style="text-align: center; padding: 13px 0; background: var(--surface-1); border-radius: var(--radius); font-size: 18px;">
+                2
+            </div>
+            <div style="text-align: center; padding: 13px 0; background: var(--surface-1); border-radius: var(--radius); font-size: 18px;">
+                3
+            </div>
+            <div style="text-align: center; padding: 13px 0; background: var(--surface-1); border-radius: var(--radius); font-size: 18px;">
+                4
+            </div>
+            <div style="text-align: center; padding: 13px 0; background: var(--surface-1); border-radius: var(--radius); font-size: 18px;">
+                5
+            </div>
+            <div style="text-align: center; padding: 13px 0; background: var(--surface-1); border-radius: var(--radius); font-size: 18px;">
+                6
+            </div>
+            <div style="text-align: center; padding: 13px 0; background: var(--surface-1); border-radius: var(--radius); font-size: 18px;">
+                7
+            </div>
+            <div style="text-align: center; padding: 13px 0; background: var(--surface-1); border-radius: var(--radius); font-size: 18px;">
+                8
+            </div>
+            <div style="text-align: center; padding: 13px 0; background: var(--surface-1); border-radius: var(--radius); font-size: 18px;">
+                9
+            </div>
+            <div style="text-align: center; padding: 13px 0; background: var(--surface-1); border-radius: var(--radius); font-size: 18px;">
+                .
+            </div>
+            <div style="text-align: center; padding: 13px 0; background: var(--surface-1); border-radius: var(--radius); font-size: 18px;">
+                0
+            </div>
+            <div style="text-align: center; padding: 13px 0; background: var(--surface-1); border-radius: var(--radius);">
+                <i aria-hidden="true" class="ti ti-backspace" style="font-size:18px;"></i></div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,96 @@
+<div style="min-height: 400px; background: rgba(0,0,0,0.45); display: flex; align-items: flex-end; justify-content: center; border-radius: 12px; padding: 1rem 0;">
+    <h2 class="sr-only">Currency picker bottom sheet with a search field, a common-currencies
+        section, and a searchable full list with checkmark on the selected currency</h2>
+    <div style="background: var(--surface-2); border-radius: 20px 20px 0 0; padding: 1.25rem; width: 380px; max-width: 100%;">
+
+        <div style="width: 36px; height: 4px; background: var(--border-strong); border-radius: 2px; margin: 0 auto 1rem;"></div>
+
+        <p style="font-size: 16px; font-weight: 500; margin: 0 0 12px;">Choose currency</p>
+
+        <input placeholder="Search currencies" style="width: 100%; margin-bottom: 14px;"
+               type="text"/>
+
+        <p style="font-size: 12px; font-weight: 500; color: var(--text-secondary); margin: 0 0 8px;">
+            Common</p>
+        <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px;">
+
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--bg-accent); border-radius: var(--radius);">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--surface-2); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; color: var(--text-accent);">
+                        $
+                    </div>
+                    <div>
+                        <p style="font-size: 14px; margin: 0; color: var(--text-accent); font-weight: 500;">
+                            USD</p>
+                        <p style="font-size: 12px; margin: 0; color: var(--text-accent);">US
+                            dollar</p></div>
+                </div>
+                <i aria-hidden="true" class="ti ti-check"
+                   style="font-size:16px; color: var(--text-accent);"></i>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--surface-1); border-radius: var(--radius);">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--surface-2); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; color: var(--text-secondary);">
+                        €
+                    </div>
+                    <div><p style="font-size: 14px; margin: 0;">EUR</p>
+                        <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Euro</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--surface-1); border-radius: var(--radius);">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--surface-2); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; color: var(--text-secondary);">
+                        £
+                    </div>
+                    <div><p style="font-size: 14px; margin: 0;">GBP</p>
+                        <p style="font-size: 12px; color: var(--text-muted); margin: 0;">British
+                            pound</p></div>
+                </div>
+            </div>
+
+        </div>
+
+        <p style="font-size: 12px; font-weight: 500; color: var(--text-secondary); margin: 0 0 8px;">
+            All currencies</p>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--surface-1); border-radius: var(--radius);">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--surface-2); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; color: var(--text-secondary);">
+                        A$
+                    </div>
+                    <div><p style="font-size: 14px; margin: 0;">AUD</p>
+                        <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Australian
+                            dollar</p></div>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--surface-1); border-radius: var(--radius);">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--surface-2); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; color: var(--text-secondary);">
+                        C$
+                    </div>
+                    <div><p style="font-size: 14px; margin: 0;">CAD</p>
+                        <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Canadian
+                            dollar</p></div>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--surface-1); border-radius: var(--radius);">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--surface-2); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; color: var(--text-secondary);">
+                        ¥
+                    </div>
+                    <div><p style="font-size: 14px; margin: 0;">JPY</p>
+                        <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Japanese
+                            yen</p></div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

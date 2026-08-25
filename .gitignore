@@ -47,13 +47,13 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Project Sensetive files
-AGENTS.md
-money-manager-app-spec.md
-money-manager-design-system.md
-money-manager-implementation-roadmap.md
-money-manager-business-rules.md
-/design_files
+# Project Document files
+# AGENTS.md
+# money-manager-app-spec.md
+# money-manager-design-system.md
+# money-manager-implementation-roadmap.md
+# money-manager-business-rules.md
+# /design_files
 
 # FVM Version Cache
 .fvm/
